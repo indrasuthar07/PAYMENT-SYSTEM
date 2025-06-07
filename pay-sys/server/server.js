@@ -74,6 +74,7 @@ app.post('/api/register', async (req, res) => {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
+                mobileNo: user.mobileNo,
                 balance: user.balance
             }
         });
@@ -114,6 +115,7 @@ app.post('/api/login', async (req, res) => {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
+                mobileNo: user.mobileNo,
                 balance: user.balance
             }
         });
