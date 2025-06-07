@@ -69,7 +69,7 @@ function Home() {
 
     return (
         <div className="max-w-6xl mx-auto space-y-6 p-4">
-            {/* Welcome Section with Glassmorphism */}
+            {/* Welcome Section */}
             <Card className="bg-gradient-to-r from-blue-600 to-blue-400 border-none shadow-2xl backdrop-blur-lg bg-opacity-90">
                 <div className="flex flex-col md:flex-row justify-between items-center">
                     <div className="text-white mb-4 md:mb-0">
@@ -92,7 +92,7 @@ function Home() {
                 </div>
             </Card>
 
-            {/* Quick Stats with Hover Effects */}
+            {/* Quick Stats */}
             <Row gutter={[16, 16]}>
                 <Col xs={24} sm={12} md={6}>
                     <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-blue-400/50 hover:border-blue-400 transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20 backdrop-blur-sm">
@@ -140,7 +140,7 @@ function Home() {
                 </Col>
             </Row>
 
-            {/* Quick Actions with Tooltips */}
+            {/* Quick Actions  */}
             <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-blue-400/50 hover:border-blue-400 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/20 backdrop-blur-sm">
                 <Title level={4} className="text-blue-400 mb-4 flex items-center">
                     <ThunderboltOutlined className="mr-2" /> Quick Actions
@@ -163,7 +163,7 @@ function Home() {
                 </Row>
             </Card>
 
-            {/* Features Carousel with Enhanced Styling */}
+            {/* Features */}
             <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-blue-400/50 hover:border-blue-400 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/20 backdrop-blur-sm">
                 <Carousel autoplay effect="fade">
                     {features.map((feature, index) => (
@@ -178,7 +178,7 @@ function Home() {
                 </Carousel>
             </Card>
 
-            {/* Recent Transactions with Enhanced Styling */}
+            {/* Recent Transactions */}
             <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-blue-400/50 hover:border-blue-400 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/20 backdrop-blur-sm">
                 <div className="flex justify-between items-center mb-4">
                     <Title level={4} className="text-blue-400 flex items-center">
@@ -224,7 +224,7 @@ function Home() {
                 />
             </Card>
 
-            {/* Premium Features Banner with Enhanced Styling */}
+            {/* Premium Banner  */}
             <Card className="bg-gradient-to-r from-purple-600 to-blue-600 border-none hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-300">
                 <div className="flex flex-col md:flex-row justify-between items-center">
                     <div className="text-white mb-4 md:mb-0">
