@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Button, Statistic, Progress, List, Badge, Avatar, Typography, Carousel, Tooltip } from 'antd';
-import { ArrowUpOutlined, ArrowDownOutlined, WalletOutlined, 
-         TransactionOutlined, CreditCardOutlined, BankOutlined,
-         BellOutlined, StarOutlined, FireOutlined, RocketOutlined,
-         SafetyCertificateOutlined, TeamOutlined, ThunderboltOutlined,
-         CrownOutlined, GiftOutlined, LineChartOutlined, BarChartOutlined } from '@ant-design/icons';
+import {
+    ArrowUpOutlined, ArrowDownOutlined, WalletOutlined,
+    TransactionOutlined, CreditCardOutlined, BankOutlined,
+    BellOutlined, StarOutlined, FireOutlined, RocketOutlined,
+    SafetyCertificateOutlined, TeamOutlined, ThunderboltOutlined,
+    CrownOutlined, GiftOutlined, LineChartOutlined, BarChartOutlined
+} from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -40,7 +42,7 @@ function Home() {
             monthlyExpense,
             savingsRate
         });
-    }, [user]);
+    }, [user?.transactions, user?.balance]);
 
     const quickActions = [
         { icon: <WalletOutlined />, title: 'Add Money', color: 'text-green-400', path: '/add-money', description: 'Add funds to your wallet' },
@@ -61,7 +63,7 @@ function Home() {
             description: 'Easily split expenses with friends and family'
         },
         {
-            icon: <RocketOutlined className="text-4xl text-purple-400" />,
+            icon: <FireOutlined className="text-4xl text-purple-400" />,
             title: 'Instant Transfers',
             description: 'Send money instantly to anyone, anywhere'
         }
@@ -81,8 +83,8 @@ function Home() {
                         </Text>
                     </div>
                     <Badge count={3} size="small">
-                        <Button 
-                            type="primary" 
+                        <Button
+                            type="primary"
                             icon={<BellOutlined />}
                             className="bg-white text-blue-500 hover:bg-blue-50 transform hover:scale-105 transition-all duration-300 rounded-lg"
                         >
@@ -187,8 +189,8 @@ function Home() {
                     <Title level={4} style={{ color: 'white' }} className="flex items-center">
                         <GiftOutlined className="text-yellow-400 mr-2" /> Recent Transactions
                     </Title>
-                    <Button 
-                        type="link" 
+                    <Button
+                        type="link"
                         className="text-blue-400 hover:text-blue-300 transition-colors"
                         onClick={() => navigate('/transactions')}
                     >
@@ -201,7 +203,7 @@ function Home() {
                         <List.Item className="bg-gray-700/50 p-4 rounded-xl mb-2 hover:bg-gray-600/50 transition-all duration-300 transform hover:scale-102 backdrop-blur-sm">
                             <div className="flex justify-between items-center w-full">
                                 <div className="flex items-center">
-                                    <Avatar 
+                                    <Avatar
                                         icon={transaction.type === 'credit' ? <ArrowDownOutlined /> : <ArrowUpOutlined />}
                                         className={`${transaction.type === 'credit' ? 'bg-green-400' : 'bg-red-400'} transform hover:scale-110 transition-transform`}
                                     />
@@ -216,8 +218,8 @@ function Home() {
                                     <div className={`text-lg font-bold ${transaction.amount > 0 ? 'text-green-400' : 'text-red-400'}`}>
                                         ${Math.abs(transaction.amount).toFixed(2)}
                                     </div>
-                                    <Badge 
-                                        status={transaction.status === 'completed' ? 'success' : 'processing'} 
+                                    <Badge
+                                        status={transaction.status === 'completed' ? 'success' : 'processing'}
                                         text={transaction.status}
                                     />
                                 </div>
@@ -238,7 +240,7 @@ function Home() {
                             Get access to exclusive features and benefits
                         </Text>
                     </div>
-                    <Button 
+                    <Button
                         type="primary"
                         className="bg-white text-purple-600 hover:bg-purple-50 transform hover:scale-105 transition-all duration-300 rounded-lg"
                         icon={<FireOutlined />}
