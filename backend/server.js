@@ -10,11 +10,11 @@ require('dotenv').config();
 
 const app = express();
 
-// Middleware
+// Basic middleware
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection
+// Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/payment-system', {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -26,19 +26,19 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/payment-s
 app.use('/api/users', userRoutes);
 app.use('/api/transactions', transactionRoutes);
 
-// Registration endpoint
+// Register user
 app.post('/api/register', async (req, res) => {
     try {
         const { firstName, lastName, email, password, dateOfBirth, mobileNo } = req.body;
 
-        // Validate required fields
+        // Check if all fields are filled
         if (!firstName || !lastName || !email || !password || !dateOfBirth || !mobileNo) {
-            return res.status(400).json({ message: 'All fields are required' });
+            return res.status(400).json({ message: 'Please fill all fields' });
         }
 
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
+        // Check if user exists
+        const userExists = await User.findOne({ email });
+        if (userExists) {
             return res.status(400).json({ message: 'User already exists' });
         }
 
@@ -54,19 +54,19 @@ app.post('/api/register', async (req, res) => {
             password: hashedPassword,
             dateOfBirth,
             mobileNo,
-            balance: 0 
+            balance: 0
         });
 
         await user.save();
-        
-        // Create JWT token
+
+        // Create token
         const token = jwt.sign(
             { userId: user._id },
-            process.env.JWT_SECRET || 'default-secret-key-for-development',
+            process.env.JWT_SECRET || 'secret123',
             { expiresIn: '24h' }
         );
 
-        res.status(201).json({ 
+        res.status(201).json({
             message: 'User registered successfully',
             token,
             user: {
@@ -84,27 +84,27 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// Login endpoint
+// Login user
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Check if user exists
+        // Find user
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: 'Invalid credentials' });
+            return res.status(400).json({ message: 'Invalid email or password' });
         }
 
-        // Verify password
+        // Check password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid credentials' });
+            return res.status(400).json({ message: 'Invalid email or password' });
         }
 
-        // Create JWT token
+        // Create token
         const token = jwt.sign(
             { userId: user._id },
-            process.env.JWT_SECRET || 'default-secret-key-for-development',
+            process.env.JWT_SECRET || 'secret123',
             { expiresIn: '24h' }
         );
 
@@ -125,7 +125,7 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Error handling middleware
+// Error handling
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ message: 'Something went wrong!' });
@@ -136,6 +136,7 @@ app.use((req, res) => {
     res.status(404).json({ message: 'Route not found' });
 });
 
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

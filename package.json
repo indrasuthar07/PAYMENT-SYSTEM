@@ -2,7 +2,13 @@
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
     "antd": "^5.25.4",
+    "axios": "^1.9.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.2"
+  },
+  "devDependencies": {
+    "postcss-flexbugs-fixes": "^5.0.2",
+    "postcss-normalize": "^13.0.1",
+    "postcss-preset-env": "^10.2.1"
   }
 }

@@ -4,11 +4,11 @@ const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcryptjs');
 
 // Get user profile
-router.get('/profile', authMiddleware, async (req, res) => {
-    try {
+router.get('/profile', authMiddleware, async (req,res)=>{
+    try{
         const user = await User.findById(req.user.userId).select('-password');
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+        if (!user){
+            return res.status(404).json({ message:'User not found'});
         }
         res.json({
             id: user._id,
@@ -19,19 +19,19 @@ router.get('/profile', authMiddleware, async (req, res) => {
             balance: user.balance,
             createdAt: user.createdAt
         });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+    }catch(error) {
+        res.status(500).json({ message: 'Server error'});
     }
 });
 
 // Update user profile
-router.put('/profile', authMiddleware, async (req, res) => {
-    try {
-        const { firstName, lastName, mobileNo } = req.body;
+router.put('/profile', authMiddleware, async (req,res)=>{
+    try{
+        const {firstName,lastName, mobileNo} = req.body;
         const user = await User.findById(req.user.userId);
         
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+        if(!user){
+            return res.status(404).json({ message:'User not found'});
         }
 
         if (firstName) user.firstName = firstName;
@@ -39,15 +39,15 @@ router.put('/profile', authMiddleware, async (req, res) => {
         if (mobileNo) user.mobileNo = mobileNo;
 
         await user.save();
-        res.json({ message: 'Profile updated successfully', user });
-    } catch (error) {
+        res.json({ message: 'Profile updated successfully',user});
+    }catch(error) {
         res.status(500).json({ message: 'Server error' });
     }
 });
 
 // Change password
 router.put('/change-password', authMiddleware, async (req, res) => {
-    try {
+    try{
         const { currentPassword, newPassword } = req.body;
         const user = await User.findById(req.user.userId);
 
@@ -57,7 +57,7 @@ router.put('/change-password', authMiddleware, async (req, res) => {
 
         // Verify current password
         const isMatch = await bcrypt.compare(currentPassword, user.password);
-        if (!isMatch) {
+        if(!isMatch) {
             return res.status(400).json({ message: 'Current password is incorrect' });
         }
 
@@ -67,7 +67,7 @@ router.put('/change-password', authMiddleware, async (req, res) => {
         await user.save();
 
         res.json({ message: 'Password changed successfully' });
-    } catch (error) {
+    }catch (error) {
         res.status(500).json({ message: 'Server error' });
     }
 });
@@ -82,6 +82,79 @@ router.get('/balance', authMiddleware, async (req, res) => {
         res.json({ balance: user.balance });
     } catch (error) {
         res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Verify account number
+router.post('/verify-account', authMiddleware, async (req, res) => {
+    try {
+        const { accountNumber } = req.body;
+        
+        // Find user by account number objectid
+        const user = await User.findById(accountNumber).select('-password');
+        
+        if (!user) {
+            return res.status(404).json({ 
+                success: false,
+                message: 'Account not found' 
+            });
+        }
+
+        // not self-transfer
+        if (user._id.toString() === req.user.userId) {
+            return res.status(400).json({
+                success: false,
+                message: 'Cannot transfer to your own account'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Account verified successfully',
+            user: {
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email
+            }
+        });
+    } catch (error) {
+        console.error('Account verification error:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Error verifying account' 
+        });
+    }
+});
+
+// Get current user
+router.get('/me', authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.userId).select('-password');
+        if (!user) {
+            return res.status(404).json({ 
+                success: false,
+                message: 'User not found' 
+            });
+        }
+        res.json({ 
+            success: true,
+            user: {
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                mobileNo: user.mobileNo,
+                balance: user.balance || 0,
+                createdAt: user.createdAt
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Server error' 
+        });
     }
 });
 

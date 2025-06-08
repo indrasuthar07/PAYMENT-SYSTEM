@@ -31,9 +31,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  balance:{
-    type:Number,
-    default:0
+  balance: {
+    type: Number,
+    default: 0,
+    min: 0
   },
   createdAt: {
     type: Date,
