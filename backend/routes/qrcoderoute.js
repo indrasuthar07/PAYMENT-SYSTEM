@@ -27,7 +27,7 @@ router.post('/generate', authMiddleware, async (req, res) => {
         await qrCode.save();
 
         // Generate QR code data
-        const qrData = {
+        const qrData ={
             qrId: qrCode._id,
             amount: qrCode.amount,
             description: qrCode.description,
@@ -39,7 +39,7 @@ router.post('/generate', authMiddleware, async (req, res) => {
             message: 'QR code generated successfully',
             qrCode: qrData
         });
-    } catch (error) {
+    } catch (error){
         console.error('QR code generation error:', error);
         res.status(500).json({ 
             success: false, 
@@ -49,26 +49,26 @@ router.post('/generate', authMiddleware, async (req, res) => {
 });
 
 // Get QR code details
-router.get('/:qrId', authMiddleware, async (req, res) => {
-    try {
+router.get('/:qrId', authMiddleware, async (req, res)=>{
+    try{
         const qrCode = await QRCode.findById(req.params.qrId)
             .populate('userId', 'firstName lastName email');
 
-        if (!qrCode) {
+        if(!qrCode){
             return res.status(404).json({ 
                 success: false, 
                 message: 'QR code not found' 
             });
         }
 
-        if (qrCode.status !== 'active') {
+        if(qrCode.status !== 'active'){
             return res.status(400).json({ 
                 success: false, 
                 message: 'QR code is no longer active' 
             });
         }
 
-        if (qrCode.expiresAt < new Date()) {
+        if(qrCode.expiresAt < new Date()){
             qrCode.status = 'expired';
             await qrCode.save();
             return res.status(400).json({ 
@@ -79,7 +79,7 @@ router.get('/:qrId', authMiddleware, async (req, res) => {
 
         res.json({
             success: true,
-            qrCode: {
+            qrCode:{
                 id: qrCode._id,
                 amount: qrCode.amount,
                 description: qrCode.description,
@@ -90,7 +90,7 @@ router.get('/:qrId', authMiddleware, async (req, res) => {
                 expiresAt: qrCode.expiresAt
             }
         });
-    } catch (error) {
+    }catch (error){
         console.error('QR code fetch error:', error);
         res.status(500).json({ 
             success: false, 
@@ -100,76 +100,76 @@ router.get('/:qrId', authMiddleware, async (req, res) => {
 });
 
 // Process QR code payment
-router.post('/pay/:qrId', authMiddleware, async (req, res) => {
-    try {
+router.post('/pay/:qrId', authMiddleware, async(req, res)=>{
+    try{
         const qrCode = await QRCode.findById(req.params.qrId)
             .populate('userId', 'firstName lastName email balance');
 
-        if (!qrCode) {
+        if(!qrCode){
             return res.status(404).json({ 
                 success: false, 
                 message: 'QR code not found' 
             });
         }
 
-        if (qrCode.status !== 'active') {
+        if(qrCode.status !== 'active'){
             return res.status(400).json({ 
                 success: false, 
                 message: 'QR code is no longer active' 
             });
         }
 
-        if (qrCode.expiresAt < new Date()) {
-            qrCode.status = 'expired';
+        if(qrCode.expiresAt<new Date()){
+            qrCode.status ='expired';
             await qrCode.save();
             return res.status(400).json({ 
                 success: false, 
-                message: 'QR code has expired' 
+                message:'QR code has expired'
             });
         }
 
         // Prevent self-payment
-        if (qrCode.userId._id.toString() === req.user.userId) {
+        if(qrCode.userId._id.toString()=== req.user.userId){
             return res.status(400).json({ 
                 success: false, 
-                message: 'Cannot pay to your own QR code' 
+                message:'Cannot pay to your own QR code' 
             });
         }
 
         // Get payer's details
-        const payer = await User.findById(req.user.userId);
-        if (!payer) {
+        const payer =await User.findById(req.user.userId);
+        if(!payer){
             return res.status(404).json({ 
                 success: false, 
-                message: 'Payer not found' 
+                message:'Payer not found' 
             });
         }
 
         // Check if payer has sufficient balance
-        if (payer.balance < qrCode.amount) {
+        if(payer.balance< qrCode.amount){
             return res.status(400).json({ 
                 success: false, 
-                message: 'Insufficient balance' 
+                message:'Insufficient balance' 
             });
         }
 
         // Create transaction
-        const transaction = new Transaction({
+        const transaction =new Transaction({
             type: 'transfer',
-            amount: qrCode.amount,
-            description: `QR Payment: ${qrCode.description}`,
-            sender: req.user.userId,
-            receiver: qrCode.userId._id,
-            status: 'completed'
+            amount:qrCode.amount,
+            description:`QR Payment:${qrCode.description}`,
+            sender:req.user.userId,
+            receiver:qrCode.userId._id,
+            status:'completed'
         });
 
         // Update balances
-        payer.balance -= qrCode.amount;
-        qrCode.userId.balance = (qrCode.userId.balance || 0) + qrCode.amount;
+        payer.balance -=qrCode.amount;
+        qrCode.userId.balance =(qrCode.userId.balance || 0)+ qrCode.amount;
 
         // Update QR code status
-        qrCode.status = 'used';
-        qrCode.paymentId = transaction._id;
+        qrCode.status ='used';
+        qrCode.paymentId =transaction._id;
 
         // Save all changes
         await Promise.all([
@@ -181,8 +181,8 @@ router.post('/pay/:qrId', authMiddleware, async (req, res) => {
 
         res.json({
             success: true,
-            message: 'Payment processed successfully',
-            transaction: {
+            message:'Payment processed successfully',
+            transaction:{
                 id: transaction._id,
                 amount: transaction.amount,
                 description: transaction.description,
@@ -190,7 +190,7 @@ router.post('/pay/:qrId', authMiddleware, async (req, res) => {
                 newBalance: payer.balance
             }
         });
-    } catch (error) {
+    }catch (error){
         console.error('QR payment error:', error);
         res.status(500).json({ 
             success: false, 
@@ -200,12 +200,11 @@ router.post('/pay/:qrId', authMiddleware, async (req, res) => {
 });
 
 // Get user's QR code history
-router.get('/history/me', authMiddleware, async (req, res) => {
+router.get('/history/me',authMiddleware,async(req, res)=>{
     try {
-        const qrCodes = await QRCode.find({ userId: req.user.userId })
+        const qrCodes =await QRCode.find({ userId: req.user.userId})
             .sort({ createdAt: -1 })
             .populate('paymentId');
-
         res.json({
             success: true,
             qrCodes: qrCodes.map(qr => ({
@@ -220,10 +219,10 @@ router.get('/history/me', authMiddleware, async (req, res) => {
                     amount: qr.paymentId.amount,
                     status: qr.paymentId.status,
                     createdAt: qr.paymentId.createdAt
-                } : null
+                }:null
             }))
         });
-    } catch (error) {
+    }catch(error){
         console.error('QR history error:', error);
         res.status(500).json({ 
             success: false, 

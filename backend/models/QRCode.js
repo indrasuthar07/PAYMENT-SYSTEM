@@ -1,36 +1,36 @@
 const mongoose = require('mongoose');
 
 const qrCodeSchema = new mongoose.Schema({
-    userId: {
+    userId:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref:'User',
         required: true
     },
-    amount: {
-        type: Number,
+    amount:{
+        type:Number,
         required: true,
         min: 0
     },
-    description: {
+    description:{
         type: String,
         required: true
     },
-    status: {
+    status:{
         type: String,
         enum: ['active', 'used', 'expired'],
         default: 'active'
     },
-    expiresAt: {
+    expiresAt:{
         type: Date,
-        default: () => new Date(+new Date() + 24*60*60*1000) // 24 hours from creation
+        default:()=> new Date(+new Date() +24*60*60*1000) // 24 hours from creation
     },
-    paymentId: {
+    paymentId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Transaction',
-        default: null
+        default:null
     }
 }, {
-    timestamps: true
+    timestamps:true
 });
 
 // Add index for faster queries

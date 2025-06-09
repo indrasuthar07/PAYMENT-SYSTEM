@@ -4,10 +4,10 @@ const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcryptjs');
 
 // Get user profile
-router.get('/profile', authMiddleware, async (req,res)=>{
+router.get('/profile', authMiddleware, async(req,res)=>{
     try{
         const user = await User.findById(req.user.userId).select('-password');
-        if (!user){
+        if(!user){
             return res.status(404).json({ message:'User not found'});
         }
         res.json({
@@ -20,12 +20,12 @@ router.get('/profile', authMiddleware, async (req,res)=>{
             createdAt: user.createdAt
         });
     }catch(error) {
-        res.status(500).json({ message: 'Server error'});
+        res.status(500).json({message:'Server error'});
     }
 });
 
 // Update user profile
-router.put('/profile', authMiddleware, async (req,res)=>{
+router.put('/profile',authMiddleware, async(req,res)=>{
     try{
         const {firstName,lastName, mobileNo} = req.body;
         const user = await User.findById(req.user.userId);
@@ -46,19 +46,19 @@ router.put('/profile', authMiddleware, async (req,res)=>{
 });
 
 // Change password
-router.put('/change-password', authMiddleware, async (req, res) => {
+router.put('/change-password',authMiddleware,async (req,res)=>{
     try{
-        const { currentPassword, newPassword } = req.body;
+        const{currentPassword,newPassword} = req.body;
         const user = await User.findById(req.user.userId);
 
-        if (!user) {
+        if(!user){
             return res.status(404).json({ message: 'User not found' });
         }
 
         // Verify current password
-        const isMatch = await bcrypt.compare(currentPassword, user.password);
-        if(!isMatch) {
-            return res.status(400).json({ message: 'Current password is incorrect' });
+        const isMatch= await bcrypt.compare(currentPassword, user.password);
+        if(!isMatch){
+            return res.status(400).json({ message:'Current password is incorrect' });
         }
 
         // Hash new password
@@ -67,33 +67,33 @@ router.put('/change-password', authMiddleware, async (req, res) => {
         await user.save();
 
         res.json({ message: 'Password changed successfully' });
-    }catch (error) {
-        res.status(500).json({ message: 'Server error' });
+    }catch(error) {
+        res.status(500).json({message:'Server error'});
     }
 });
 
 // Get user balance
-router.get('/balance', authMiddleware, async (req, res) => {
-    try {
+router.get('/balance',authMiddleware,async (req,res)=>{
+    try{
         const user = await User.findById(req.user.userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
         res.json({ balance: user.balance });
-    } catch (error) {
+    }catch(error){
         res.status(500).json({ message: 'Server error' });
     }
 });
 
 // Verify account number
-router.post('/verify-account', authMiddleware, async (req, res) => {
-    try {
-        const { accountNumber } = req.body;
+router.post('/verify-account', authMiddleware,async (req,res)=>{
+    try{
+        const{accountNumber} = req.body;
         
         // Find user by account number objectid
         const user = await User.findById(accountNumber).select('-password');
         
-        if (!user) {
+        if(!user){
             return res.status(404).json({ 
                 success: false,
                 message: 'Account not found' 
@@ -101,37 +101,37 @@ router.post('/verify-account', authMiddleware, async (req, res) => {
         }
 
         // not self-transfer
-        if (user._id.toString() === req.user.userId) {
+        if(user._id.toString()=== req.user.userId) {
             return res.status(400).json({
                 success: false,
-                message: 'Cannot transfer to your own account'
+                message:'Cannot transfer to your own account'
             });
         }
 
         res.json({
-            success: true,
-            message: 'Account verified successfully',
-            user: {
+            success:true,
+            message:'Account verified successfully',
+            user:{
                 _id: user._id,
-                firstName: user.firstName,
+                firstName:user.firstName,
                 lastName: user.lastName,
                 email: user.email
             }
         });
-    } catch (error) {
-        console.error('Account verification error:', error);
+    }catch(error){
+        console.error('Account verification error:',error);
         res.status(500).json({ 
-            success: false,
-            message: 'Error verifying account' 
+            success:false,
+            message:'Error verifying account' 
         });
     }
 });
 
 // Get current user
-router.get('/me', authMiddleware, async (req, res) => {
-    try {
+router.get('/me', authMiddleware, async(req, res)=>{
+    try{
         const user = await User.findById(req.user.userId).select('-password');
-        if (!user) {
+        if(!user){
             return res.status(404).json({ 
                 success: false,
                 message: 'User not found' 
@@ -139,7 +139,7 @@ router.get('/me', authMiddleware, async (req, res) => {
         }
         res.json({ 
             success: true,
-            user: {
+            user:{
                 _id: user._id,
                 firstName: user.firstName,
                 lastName: user.lastName,
@@ -149,8 +149,8 @@ router.get('/me', authMiddleware, async (req, res) => {
                 createdAt: user.createdAt
             }
         });
-    } catch (error) {
-        console.error('Error fetching user:', error);
+    }catch (error){
+        console.error('Error fetching user:',error);
         res.status(500).json({ 
             success: false,
             message: 'Server error' 

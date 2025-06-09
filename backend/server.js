@@ -9,38 +9,38 @@ const transactionRoutes = require('./routes/transictionroute');
 const qrCodeRoutes = require('./routes/qrcoderoute');
 require('dotenv').config();
 
-const app = express();
+const app =express();
 
 // Basic middleware
 app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/payment-system', {
+mongoose.connect(process.env.MONGODB_URI ||'mongodb://127.0.0.1:27017/payment-system', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
 .then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('MongoDB connection error:', err));
+.catch(err => console.error('MongoDB connection error:',err));
 
 // Routes
-app.use('/api/users', userRoutes);
-app.use('/api/transactions', transactionRoutes);
+app.use('/api/users',userRoutes);
+app.use('/api/transactions',transactionRoutes);
 app.use('/api/qrcode', qrCodeRoutes);
 
 // Register user
-app.post('/api/register', async (req, res) => {
-    try {
+app.post('/api/register', async(req, res)=>{
+    try{
         const { firstName, lastName, email, password, dateOfBirth, mobileNo } = req.body;
 
         // Check if all fields are filled
-        if (!firstName || !lastName || !email || !password || !dateOfBirth || !mobileNo) {
+        if(!firstName || !lastName||!email|| !password||!dateOfBirth || !mobileNo) {
             return res.status(400).json({ message: 'Please fill all fields' });
         }
 
         // Check if user exists
-        const userExists = await User.findOne({ email });
-        if (userExists) {
+        const userExists =await User.findOne({ email });
+        if(userExists){
             return res.status(400).json({ message: 'User already exists' });
         }
 
@@ -49,7 +49,7 @@ app.post('/api/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // Create new user
-        const user = new User({
+        const user =new User({
             firstName,
             lastName,
             email,

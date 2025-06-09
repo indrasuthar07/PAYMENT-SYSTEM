@@ -27,21 +27,21 @@ function AppContent() {
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}
-          <Route path="/signin" element={!isAuthenticated ? <SignIn /> : <Navigate to="/home" replace />} />
-          <Route path="/signup" element={!isAuthenticated ? <SignUp /> : <Navigate to="/home" replace />} />
+          <Route path="/signin" element={!isAuthenticated ? <SignIn/>: <Navigate to="/home" replace />}/>
+          <Route path="/signup" element={!isAuthenticated ? <SignUp/>: <Navigate to="/home" replace />}/>
           
           {/* Protected Routes */}
-          <Route path="/" element={isAuthenticated ? <Layout /> : <Navigate to="/signin" replace />}>
-            <Route index element={<Navigate to="/home" replace />} />
-            <Route path="home" element={<Home />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="transactions" element={<Transactions />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="qrcode" element={<QRCodePage />} />
+          <Route path="/" element={isAuthenticated ? <Layout/> : <Navigate to="/signin" replace/>}>
+            <Route index element={<Navigate to="/home" replace/>}/>
+            <Route path="home" element={<Home/>}/>
+            <Route path="profile" element={<Profile/>}/>
+            <Route path="transactions" element={<Transactions/>}/>
+            <Route path="settings" element={<Settings/>}/>
+            <Route path="qrcode" element={<QRCodePage/>}/>
           </Route>
 
-          {/* Catch all route - redirect to signin if not authenticated */}
-          <Route path="*" element={<Navigate to={isAuthenticated ? "/home" : "/signin"} replace />} />
+         
+          <Route path="*" element={<Navigate to={isAuthenticated ? "/home" : "/signin"} replace/>}/>
         </Routes>
       </BrowserRouter>
     </Provider>
@@ -49,7 +49,7 @@ function AppContent() {
 }
 
 function App() {
-  return <AppContent />;
+  return <AppContent/>;
 }
 
 export default App;

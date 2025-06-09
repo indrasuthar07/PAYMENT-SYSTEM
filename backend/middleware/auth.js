@@ -12,8 +12,8 @@ const auth = (req, res, next) => {
     req.user = verified;
     next();
   } catch (error) {
-    res.status(401).json({ message: 'Token verification failed, authorization denied' });
+    res.status(401).json({ message: 'Token verification failed, authorization denied'});
   }
 };
 
-module.exports = auth; 
+module.exports = auth;
