@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const User = require('./models/User');
 const userRoutes = require('./routes/userroute');
 const transactionRoutes = require('./routes/transictionroute');
+const qrCodeRoutes = require('./routes/qrcoderoute');
 require('dotenv').config();
 
 const app = express();
@@ -25,6 +26,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/payment-s
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/transactions', transactionRoutes);
+app.use('/api/qrcode', qrCodeRoutes);
 
 // Register user
 app.post('/api/register', async (req, res) => {
@@ -54,11 +56,11 @@ app.post('/api/register', async (req, res) => {
             password: hashedPassword,
             dateOfBirth,
             mobileNo,
-            balance: 0
+            balance: 0 
         });
 
         await user.save();
-
+        
         // Create token
         const token = jwt.sign(
             { userId: user._id },
@@ -66,7 +68,7 @@ app.post('/api/register', async (req, res) => {
             { expiresIn: '24h' }
         );
 
-        res.status(201).json({
+        res.status(201).json({ 
             message: 'User registered successfully',
             token,
             user: {

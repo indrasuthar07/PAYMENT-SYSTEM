@@ -35,9 +35,9 @@ function Profile() {
             <div className="flex items-center justify-center min-h-screen">
                 <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-blue-400/50">
                     <Title level={4} style={{ color: 'white' }}>Please sign in to view your profile</Title>
-                    <Button type="primary" onClick={() => navigate('/signin')}>
+                <Button type="primary" onClick={() => navigate('/signin')}>
                         Sign In
-                    </Button>
+                </Button>
                 </Card>
             </div>
         );
@@ -69,83 +69,84 @@ function Profile() {
                 </div>
             </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Profile Info Card */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Profile Info Card */}
                 <Card className="bg-white border-none shadow-lg hover:shadow-xl transition-all duration-300">
-                    <div className="flex flex-col items-center">
-                        <Avatar 
-                            size={120} 
-                            icon={<UserOutlined />} 
+                        <div className="flex flex-col items-center">
+                            <Avatar 
+                                size={120} 
+                                icon={<UserOutlined />} 
                             className="bg-blue-500 mb-4"
-                        />
+                            />
                         <Title level={3} className="text-gray-800 mb-2">
-                            {user?.firstName} {user?.lastName}
+                                {user?.firstName} {user?.lastName}
                         </Title>
                         <Text className="text-gray-600 mb-4">{user?.email}</Text>
-                        <Badge 
-                            status="success" 
+                        <Text className="text-gray-600 mb-4"> AC. NO. :{user?.id}</Text>
+                            <Badge 
+                                status="success" 
                             text={<span className="text-green-500">Active Account</span>} 
-                        />
-                    </div>
-                </Card>
+                            />
+                        </div>
+                    </Card>
 
-                {/* Stats Card */}
+                    {/* Stats Card */}
                 <Card className="bg-white border-none shadow-lg hover:shadow-xl transition-all duration-300">
                     <Title level={4} className="text-gray-800 mb-4">Account Statistics</Title>
-                    <Row gutter={[16, 16]}>
-                        <Col span={12}>
-                            <Statistic 
+                        <Row gutter={[16, 16]}>
+                            <Col span={12}>
+                                <Statistic 
                                 title={<span className="text-gray-600">Balance</span>}
-                                value={user?.balance || 0}
-                                precision={2}
-                                prefix="$"
+                                    value={user?.balance || 0}
+                                    precision={2}
+                                    prefix="$"
                                 valueStyle={{ color: '#2563eb' }}
-                            />
-                        </Col>
-                        <Col span={12}>
-                            <Statistic 
+                                />
+                            </Col>
+                            <Col span={12}>
+                                <Statistic 
                                 title={<span className="text-gray-600">Transactions</span>}
-                                value={user?.transactions?.length || 0}
+                                    value={user?.transactions?.length || 0}
                                 valueStyle={{ color: '#2563eb' }}
-                            />
-                        </Col>
-                    </Row>
+                                />
+                            </Col>
+                        </Row>
                     <Divider className="border-gray-200" />
-                    <div className="mt-4">
+                        <div className="mt-4">
                         <Text className="text-gray-600 mb-2">Account Level</Text>
-                        <Progress 
-                            percent={75} 
+                            <Progress 
+                                percent={75} 
                             strokeColor="#2563eb"
                             trailColor="#E5E7EB"
-                            showInfo={false}
-                        />
+                                showInfo={false}
+                            />
                         <Text className="text-gray-500 text-sm mt-2">Premium Account</Text>
-                    </div>
-                </Card>
+                        </div>
+                    </Card>
 
-                {/* Quick Actions Card */}
+                    {/* Quick Actions Card */}
                 <Card className="bg-white border-none shadow-lg hover:shadow-xl transition-all duration-300">
                     <Title level={4} className="text-gray-800 mb-4">Quick Actions</Title>
-                    <List
-                        dataSource={[
+                        <List
+                            dataSource={[
                             { icon: <WalletOutlined />, text: 'Add Money', color: 'text-green-500' },
                             { icon: <TransactionOutlined />, text: 'Send Money', color: 'text-blue-500' },
                             { icon: <CreditCardOutlined />, text: 'Link Card', color: 'text-purple-500' },
                             { icon: <BankOutlined />, text: 'Link Bank', color: 'text-yellow-500' },
-                        ]}
-                        renderItem={item => (
-                            <List.Item>
-                                <Button 
-                                    type="text" 
+                            ]}
+                            renderItem={item => (
+                                <List.Item>
+                                    <Button 
+                                        type="text" 
                                     className={`flex items-center gap-2 ${item.color} hover:bg-gray-50 w-full text-left`}
-                                >
-                                    {item.icon} {item.text}
-                                </Button>
-                            </List.Item>
-                        )}
-                    />
-                </Card>
-            </div>
+                                    >
+                                        {item.icon} {item.text}
+                                    </Button>
+                                </List.Item>
+                            )}
+                        />
+                    </Card>
+                </div>
 
             <Card className="bg-white border-none shadow-lg hover:shadow-xl transition-all duration-300">
                 <Tabs 

@@ -10,6 +10,7 @@ import Transactions from './pages/Transictions';
 import Settings from './pages/settings';
 import SignIn from './pages/signin';
 import SignUp from './pages/signup';
+import QRCodePage from './pages/qrcode';
 import { useSelector, useDispatch } from 'react-redux';
 import { checkAuth } from './redux/actions/authActions';
 
@@ -36,6 +37,7 @@ function AppContent() {
             <Route path="profile" element={<Profile />} />
             <Route path="transactions" element={<Transactions />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="qrcode" element={<QRCodePage />} />
           </Route>
 
           {/* Catch all route - redirect to signin if not authenticated */}
