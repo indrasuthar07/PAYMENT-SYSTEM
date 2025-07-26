@@ -15,7 +15,7 @@ function MobileNav() {
   const navigate = useNavigate();
 
   return (
-    <nav className="fixed bottom-0 left-0 w-full bg-gradient-to-r from-blue-900 via-blue-700 to-purple-900/95 backdrop-blur-xl border-t border-white/10 flex justify-around items-center py-2 z-50 md:hidden shadow-2xl">
+    <nav className="fixed bottom-0 left-0 w-full bg-blue-700 backdrop-blur-xl border-t border-white/10 flex justify-around items-center py-2 z-50 md:hidden shadow-2xl">
       {navItems.map((item) => {
         const isActive = location.pathname.startsWith(item.path);
         return (
