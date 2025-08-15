@@ -12,7 +12,11 @@ require('dotenv').config();
 const app =express();
 
 // Basic middleware
-app.use(cors());
+app.use(cors({
+  origin: "https://your-frontend-domain.com",
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Connect to MongoDB
