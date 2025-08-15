@@ -28,12 +28,12 @@ mongoose.connect(process.env.MONGODB_URI ||'mongodb://127.0.0.1:27017/payment-sy
 .catch(err => console.error('MongoDB connection error:',err));
 
 // Routes
-app.use('/api/users',userRoutes);
-app.use('/api/transactions',transactionRoutes);
-app.use('/api/qrcode', qrCodeRoutes);
+app.use('/users',userRoutes);
+app.use('/transactions',transactionRoutes);
+app.use('/qrcode', qrCodeRoutes);
 
 // Register user
-app.post('/api/register', async(req, res)=>{
+app.post('/register', async(req, res)=>{
     try{
         const { firstName, lastName, email, password, dateOfBirth, mobileNo } = req.body;
 
@@ -91,7 +91,7 @@ app.post('/api/register', async(req, res)=>{
 });
 
 // Login user
-app.post('/api/login', async (req, res) => {
+app.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
