@@ -30,7 +30,7 @@ function Settings() {
         navigate('/signin');
         return;
       }
-      const response = await axios.get('https://payment-system-07.onrender.com/users/profile', {
+      const response = await axios.get('https://payment-system-07.onrender.com/api/users/profile', {
         headers: { Authorization: `Bearer ${token}` }
       });
       dispatch(SetUser(response.data));

@@ -30,7 +30,7 @@ const Home = () => {
   const fetchUserBalance = async () => {
     if (!token) return;
     try {
-      const response = await axios.get('https://payment-system-777.onrender.com/users/me', {
+      const response = await axios.get('https://payment-system-777.onrender.com/api/users/me', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data?.user) {
@@ -49,7 +49,7 @@ const Home = () => {
   const fetchTransactions = async () => {
     if (!token) return;
     try {
-      const response = await axios.get('https://payment-system-07.onrender.com/transactions', {
+      const response = await axios.get('https://payment-system-07.onrender.com/api/transactions', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {

@@ -18,7 +18,7 @@ function TransferModal({ showTransferModal, setShowTransferModal, reloadData }) 
 
         setVerifying(true);
         try {
-            const response = await axios.get(`https://payment-system-07.onrender.com/transactions/verify-account/${accountId}`, {
+            const response = await axios.get(`https://payment-system-07.onrender.com/api/transactions/verify-account/${accountId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (response.data.success) {
@@ -51,7 +51,7 @@ function TransferModal({ showTransferModal, setShowTransferModal, reloadData }) 
         setLoading(true);
         try {
             const response = await axios.post(
-                'https://payment-system-07.onrender.com/transactions/transfer',
+                'https://payment-system-07.onrender.com/api/transactions/transfer',
                 {
                     receiverId: receiverDetails._id,
                     amount: parseFloat(values.amount),

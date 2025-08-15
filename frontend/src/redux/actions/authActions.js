@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { SetUser, SetLoading, SetError, ClearUser } from '../UserSlice';
 
-const API_URL = 'https://payment-system-07.onrender.com';
+const API_URL = 'https://payment-system-07.onrender.com/api';
 
 // Add token to all requests
 axios.interceptors.request.use(
