@@ -24,7 +24,8 @@ function SignIn() {
 
       // ✅ Always use a single API base URL
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL || "https://payment-system-07.onrender.com"}/api/login`,
+        `${process.env.VITE_API_BASE_URL
+ || "https://payment-system-07.onrender.com"}/api/login`,
         {
           email: values.email,
           password: values.password,

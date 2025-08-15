@@ -16,7 +16,7 @@ function SignUp() {
       setLoading(true);
 
       // ✅ FIXED API URL (replace with your backend Render URL)
-      const API_BASE = "https://payment-system-777.onrender.com";
+      const API_BASE = "https://payment-system-07.onrender.com";
 
       // ✅ FIXED date format for AntD Dayjs object
       const dob = values.dateOfBirth.format("YYYY-MM-DD");
