@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Button, Badge, Typography, message, Timeline, Tooltip } from 'antd';
+import { Card, Row, Col, Button, Badge, Typography, message, Tooltip } from 'antd';
 import {
-  ArrowUpOutlined, ArrowDownOutlined, WalletOutlined, TransactionOutlined,
-  CreditCardOutlined, BankOutlined, BellOutlined, ThunderboltOutlined, DollarOutlined
+  WalletOutlined, TransactionOutlined, CreditCardOutlined, BankOutlined,
+  BellOutlined, ThunderboltOutlined, DollarOutlined
 } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,8 @@ import CountUp from 'react-countup';
 import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 const Home = () => {
   const { user, loading } = useSelector((state) => state.auth);
@@ -27,10 +29,11 @@ const Home = () => {
   const [transactions, setTransactions] = useState([]);
   const token = localStorage.getItem('token');
 
+  // Fetch user balance
   const fetchUserBalance = async () => {
     if (!token) return;
     try {
-      const response = await axios.get('https://payment-system-777.onrender.com/api/users/me', {
+      const response = await axios.get(`${API_BASE_URL}/api/users/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data?.user) {
@@ -41,21 +44,24 @@ const Home = () => {
           monthlyExpense: 7000
         }));
       }
-    } catch {
+    } catch (err) {
+      console.error(err);
       message.error('Failed to fetch user balance');
     }
   };
 
+  // Fetch transactions
   const fetchTransactions = async () => {
     if (!token) return;
     try {
-      const response = await axios.get('https://payment-system-07.onrender.com/api/transactions', {
+      const response = await axios.get(`${API_BASE_URL}/api/transactions`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
         setTransactions(response.data.transactions);
       }
-    } catch {
+    } catch (err) {
+      console.error(err);
       message.error('Failed to fetch transactions');
     }
   };
@@ -108,7 +114,8 @@ const Home = () => {
 
   return (
     <div className="relative w-full py-6 px-4 sm:px-8 md:px-16 space-y-6 bg-gradient-to-br from-blue-50 via-white to-indigo-50 min-h-screen text-gray-800 overflow-hidden">
-      {/* Animated Background */}
+      
+      {/* Floating BG Icons */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         {[...Array(20)].map((_, i) => (
           <DollarOutlined
@@ -146,198 +153,7 @@ const Home = () => {
         </Badge>
       </div>
 
-      {/* Quick Stats */}
-     <Row gutter={[16, 16]} justify="center" align="middle">
-  <Col xs={12} md={6}>
-    {/* Total Balance */}
-    <Card className="relative rounded-lg bg-white shadow-md border border-gray-100 text-center hover:shadow-xl transition-all p-2 sm:p-6">
-      <div className="absolute -top-4 -right-4 w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-blue-200 to-blue-400 rounded-full opacity-30 z-0"></div>
-      <div className="relative z-10">
-        <Text className="text-xs font-bold sm:text-lg text-gray-500">Total User Balance</Text>
-        <Title level={2} className="!text-xs !font-bold sm:!text-2xl !text-blue-600 mt-1 sm:mt-2">
-          <CountUp end={user?.balance || 0} duration={2} separator="," prefix="$" />
-        </Title>
-      </div>
-    </Card>
-  </Col>
 
-  <Col xs={12} md={6}>
-    {/* Monthly Income */}
-    <Card className="relative rounded-lg bg-white shadow-md border border-gray-100 text-center hover:shadow-xl transition-all p-2 sm:p-6">
-      <div className="absolute -top-4 -right-4 w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-green-200 to-green-400 rounded-full opacity-30 z-0"></div>
-      <div className="relative z-10">
-        <Text className="text-xs font-bold sm:text-lg text-gray-500">Monthly Income</Text>
-        <Title level={2} className="!text-xs !font-bold sm:!text-2xl !text-green-500 mt-1 sm:mt-2">
-          <CountUp end={15000} duration={2} separator="," prefix="$" />
-        </Title>
-      </div>
-    </Card>
-  </Col>
-
-  <Col xs={12} md={6}>
-    {/* Monthly Expense */}
-    <Card className="relative rounded-lg bg-white shadow-md border border-gray-100 text-center hover:shadow-xl transition-all p-2 sm:p-6">
-      <div className="absolute -top-4 -right-4 w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-red-200 to-red-400 rounded-full opacity-30 z-0"></div>
-      <div className="relative z-10">
-        <Text className="text-xs font-bold sm:text-lg text-gray-500">Monthly Expense</Text>
-        <Title level={2} className="!text-xs !font-bold sm:!text-2xl !text-red-500 mt-1 sm:mt-2">
-          <CountUp end={7000} duration={2} separator="," prefix="$" />
-        </Title>
-      </div>
-    </Card>
-  </Col>
-
-  <Col xs={12} md={6}>
-    {/* Savings Rate */}
-    <Card className="relative rounded-lg bg-white shadow-md border border-gray-100 text-center hover:shadow-xl transition-all p-2 sm:p-6">
-      <div className="absolute -top-4 -right-4 w-16
-       h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-green-200 to-green-400 rounded-full opacity-30 z-0"></div>
-      <div className="relative z-10">
-        <Text className="text-xs font-bold sm:text-lg text-gray-500">Savings Rate</Text>
-        <div className="relative sm:my-4 w-16 h-16 sm:w-20 sm:h-20">
-          <svg className="transform -rotate-90 w-16 h-16 sm:w-20 sm:h-20">
-            <circle
-              cx="32"
-              cy="32"
-              r="24"
-              stroke="currentColor"
-              strokeWidth="6"
-              className="text-gray-200"
-              fill="transparent"
-            />
-            <circle
-              cx="32"
-              cy="32"
-              r="24"
-              stroke="currentColor"
-              strokeWidth="6"
-              className="text-green-500"
-              strokeDasharray={`${2 * Math.PI * 24}`}
-              strokeDashoffset={`${2 * Math.PI * 24 * (1 - 0.65)}`} // 65%
-              strokeLinecap="round"
-              fill="transparent"
-            />
-          </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-xs sm:text-xl font-bold text-green-600">
-            65%
-          </span>
-        </div>
-      </div>
-    </Card>
-  </Col>
-</Row>
-
-
-
-
-      {/* Quick Actions */}
-      <Card title={<span className="text-blue-600 text-xl font-semibold md:text-2xl "><ThunderboltOutlined /> Quick Actions</span>} className="rounded-xl bg-white shadow-lg border border-gray-100">
-        <Row gutter={[16, 16]} justify="center">
-          {quickActions.map((action, i) => (
-            <Col xs={12} sm={6} key={i} className="flex text-sm flex-col items-center md:text-xl">
-              <Tooltip title={action.title}>
-                <Button
-                  shape="circle"
-                  size="large"
-                  icon={action.icon}
-                  onClick={action.onClick}
-                  className={`${action.color} hover:scale-110 transform transition-transform shadow-lg text-white`}
-                />
-              </Tooltip>
-              <span className="mt-2 text-gray-600 font-medium">{action.title}</span>
-            </Col>
-          ))}
-        </Row>
-      </Card>
-
-      {/* Recent Transactions */}
-      <Card
-  className="rounded-2xl shadow-xl bg-white backdrop-blur-lg border-none p-6"
->
-  <div className="flex justify-between items-center mb-4">
-    <h2 className="text-2xl font-bold text-blue-700">Transactions</h2>
-    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between w-full">
-  <Button
-    type="primary"
-    className="w-full sm:w-auto bg-green-500 hover:bg-green-600 rounded-lg shadow-md text-sm sm:text-base"
-    onClick={() => setShowAddMoneyModal(true)}
-  >
-    + Add Money
-  </Button>
-  <Button
-    type="primary"
-    className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 rounded-lg shadow-md text-sm sm:text-base"
-    onClick={() => setShowTransferModal(true)}
-  >
-    Transfer
-  </Button>
-</div>
-
-  </div>
-
-  <div className="overflow-x-auto">
-  <table className="w-full text-[10px] sm:text-xs md:text-sm text-left text-gray-600">
-    <thead>
-      <tr className="bg-gray-100 text-gray-800">
-        <th className="px-2 sm:px-4 py-2 rounded-tl-lg">Transaction ID</th>
-        <th className="px-2 sm:px-4 py-2">Date & Time</th>
-        <th className="px-2 sm:px-4 py-2">Type</th>
-        <th className="px-2 sm:px-4 py-2">Amount</th>
-        <th className="px-2 sm:px-4 py-2">Status</th>
-        <th className="px-2 sm:px-4 py-2 rounded-tr-lg">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {transactions.slice(0, 5).map((t, index) => (
-        <tr
-          key={t._id || index}
-          className="border-b hover:bg-gray-50 transition"
-        >
-          <td className="px-2 sm:px-4 py-2 text-blue-600 font-medium break-words">
-            {t._id}
-          </td>
-          <td className="px-2 sm:px-4 py-2 whitespace-nowrap">
-            {new Date(t.createdAt).toLocaleString()}
-          </td>
-          <td className="px-2 sm:px-4 py-2">
-            <span
-              className={`px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-semibold ${
-                t.type === "deposit"
-                  ? "bg-green-100 text-green-600"
-                  : "bg-blue-100 text-blue-600"
-              }`}
-            >
-              {t.type.toUpperCase()}
-            </span>
-          </td>
-          <td
-            className={`px-2 sm:px-4 py-2 font-bold ${
-              t.type === "deposit" ? "text-green-500" : "text-red-500"
-            }`}
-          >
-            {t.type === "deposit" ? "+" : "-"}${t.amount.toFixed(2)}
-          </td>
-          <td className="px-2 sm:px-4 py-2 flex items-center gap-1 sm:gap-2 text-green-600">
-            <span className="h-2 w-2 bg-green-500 rounded-full"></span>
-            Completed
-          </td>
-          <td className="px-2 sm:px-4 py-2">
-            <Button
-              type="link"
-              className="text-blue-500 hover:text-blue-700 text-[10px] sm:text-xs"
-            >
-              View
-            </Button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
-
-</Card>
-
-      {/* Modals */}
       <TransferModal showTransferModal={showTransferModal} setShowTransferModal={setShowTransferModal} reloadData={fetchTransactions} />
       <AddMoneyModal showAddMoneyModal={showAddMoneyModal} setShowAddMoneyModal={setShowAddMoneyModal} reloadData={fetchTransactions} />
     </div>

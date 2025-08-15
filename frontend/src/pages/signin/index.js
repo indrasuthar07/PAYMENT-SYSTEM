@@ -21,19 +21,31 @@ function SignIn() {
   const onFinish = async (values) => {
     try {
       setLoading(true);
-      const response = await axios.post('https://payment-system-07.onrender.com/api/login', {
-        email: values.email,
-        password: values.password
-      });
+
+      // ✅ Always use a single API base URL
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL || "https://payment-system-07.onrender.com"}/api/login`,
+        {
+          email: values.email,
+          password: values.password,
+        },
+        { withCredentials: true } // helps if your backend uses cookies / sessions
+      );
+
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
         dispatch(SetUser(response.data.user));
         message.success('Login successful!');
         navigate('/home');
+      } else {
+        message.error('Invalid response from server.');
       }
     } catch (error) {
-      message.error(error.response?.data?.message || 'Login failed. Please check your credentials.');
+      console.error("Login Error:", error);
+      message.error(
+        error.response?.data?.message || 'Login failed. Please check your credentials.'
+      );
     } finally {
       setLoading(false);
     }
@@ -42,23 +54,25 @@ function SignIn() {
   return (
     <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-blue-50">
       <div className="glass-card w-full max-w-md mx-auto p-8 shadow-2xl flex flex-col items-center">
+        
+        {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center items-center space-x-2">
             <h1 className="text-3xl font-bold text-blue-700">Welcome</h1>
-            <h1 className="text-3xl font-bold text-blue-400 hover:text-blue-300 transition-colors">Back</h1>
+            <h1 className="text-3xl font-bold text-blue-400 hover:text-blue-300 transition-colors">
+              Back
+            </h1>
           </div>
           <p className="text-gray-600 mt-2">Sign in to continue</p>
         </div>
-        <Form
-          layout="vertical"
-          className="space-y-4 w-full"
-          onFinish={onFinish}
-        >
+
+        {/* Form */}
+        <Form layout="vertical" className="space-y-4 w-full" onFinish={onFinish}>
           <Form.Item
             name="email"
             rules={[
               { required: true, message: 'Please input your email!' },
-              { type: 'email', message: 'Please enter a valid email!' }
+              { type: 'email', message: 'Please enter a valid email!' },
             ]}
           >
             <Input
@@ -67,11 +81,10 @@ function SignIn() {
               className="bg-blue-50 border-blue-200 text-blue-900 placeholder-blue-400 h-12 rounded-lg"
             />
           </Form.Item>
+
           <Form.Item
             name="password"
-            rules={[
-              { required: true, message: 'Please input your password!' }
-            ]}
+            rules={[{ required: true, message: 'Please input your password!' }]}
           >
             <Input.Password
               prefix={<LockOutlined className="text-blue-600" />}
@@ -79,6 +92,7 @@ function SignIn() {
               className="bg-blue-50 border-blue-200 text-blue-900 placeholder-blue-400 h-12 rounded-lg"
             />
           </Form.Item>
+
           <Button
             type="primary"
             htmlType="submit"
@@ -88,10 +102,15 @@ function SignIn() {
             Sign In
           </Button>
         </Form>
+
+        {/* Footer */}
         <div className="mt-6 text-center w-full">
           <p className="text-gray-600">
-            Don't have an account?{' '}
-            <Link to="/signup" className="text-blue-500 hover:text-blue-400 transition-colors">
+            Don&apos;t have an account?{' '}
+            <Link
+              to="/signup"
+              className="text-blue-500 hover:text-blue-400 transition-colors"
+            >
               Sign Up
             </Link>
           </p>
