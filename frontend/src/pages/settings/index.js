@@ -30,7 +30,7 @@ function Settings() {
         navigate('/signin');
         return;
       }
-      const response = await axios.get('http://localhost:5000/api/users/profile', {
+      const response = await axios.get('https://payment-system-777.onrender.com/users/profile', {
         headers: { Authorization: `Bearer ${token}` }
       });
       dispatch(SetUser(response.data));
@@ -50,7 +50,7 @@ function Settings() {
         navigate('/signin');
         return;
       }
-      const response = await axios.put('http://localhost:5000/api/users/profile', values, {
+      const response = await axios.put('https://payment-system-777.onrender.com/users/profile', values, {
         headers: { Authorization: `Bearer ${token}` }
       });
       dispatch(SetUser(response.data.user));
