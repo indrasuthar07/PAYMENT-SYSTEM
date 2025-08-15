@@ -13,7 +13,7 @@ const app =express();
 
 // Basic middleware
 app.use(cors({
-  origin: "https://your-frontend-domain.com",
+  origin: "https://payment-system-777.onrender.com",
   credentials: true
 }));
 
