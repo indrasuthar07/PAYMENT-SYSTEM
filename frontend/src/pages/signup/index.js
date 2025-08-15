@@ -14,7 +14,7 @@ function SignUp() {
   const onFinish = async (values) => {
     try {
       setLoading(true);
-      const response = await axios.post('https://payment-system-777.onrender.com/register', {
+      const response = await axios.post('https://payment-system-07.onrender.com/register', {
         firstName: values.firstName,
         lastName: values.lastName,
         email: values.email,
