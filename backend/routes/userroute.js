@@ -3,7 +3,7 @@ const User = require('../models/User');
 const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcryptjs');
 
-// Get user profile
+// Get user's profile
 router.get('/profile', authMiddleware, async(req,res)=>{
     try{
         const user = await User.findById(req.user.userId).select('-password');
