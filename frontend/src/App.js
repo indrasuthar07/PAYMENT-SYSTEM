@@ -29,7 +29,6 @@ function AppContent() {
           {/* Public Routes */}
           <Route path="/signin" element={!isAuthenticated ? <SignIn/>: <Navigate to="/home" replace />}/>
           <Route path="/signup" element={!isAuthenticated ? <SignUp/>: <Navigate to="/home" replace />}/>
-          
           {/* Protected Routes */}
           <Route path="/" element={isAuthenticated ? <Layout/> : <Navigate to="/signin" replace/>}>
             <Route index element={<Navigate to="/home" replace/>}/>
