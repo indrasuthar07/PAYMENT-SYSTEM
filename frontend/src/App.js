@@ -1,6 +1,6 @@
 import './index.css';
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './redux/Store';
 import Layout from './components/Layout';
@@ -11,8 +11,11 @@ import Settings from './pages/settings';
 import SignIn from './pages/signin';
 import SignUp from './pages/signup';
 import QRCodePage from './pages/qrcode';
+import AuthCallback from './pages/auth/callback';
 import { useSelector, useDispatch } from 'react-redux';
 import { checkAuth } from './redux/actions/authActions';
+import { SetUser } from './redux/UserSlice';
+import axios from 'axios';
 
 function AppContent() {
   const dispatch = useDispatch();
@@ -23,12 +26,12 @@ function AppContent() {
   }, [dispatch]);
 
   return (
-    <Provider store={store}>
-      <BrowserRouter>
-        <Routes>
+    <BrowserRouter>
+      <Routes>
           {/* Public Routes */}
           <Route path="/signin" element={!isAuthenticated ? <SignIn/>: <Navigate to="/home" replace />}/>
           <Route path="/signup" element={!isAuthenticated ? <SignUp/>: <Navigate to="/home" replace />}/>
+          <Route path="/auth/callback" element={<AuthCallback/>}/>
           
           {/* Protected Routes */}
           <Route path="/" element={isAuthenticated ? <Layout/> : <Navigate to="/signin" replace/>}>
@@ -42,14 +45,17 @@ function AppContent() {
 
          
           <Route path="*" element={<Navigate to={isAuthenticated ? "/home" : "/signin"} replace/>}/>
-        </Routes>
-      </BrowserRouter>
-    </Provider>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
 function App() {
-  return <AppContent/>;
+  return (
+    <Provider store={store}>
+      <AppContent/>
+    </Provider>
+  );
 }
 
 export default App;

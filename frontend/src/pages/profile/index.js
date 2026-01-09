@@ -1,18 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Avatar, Button, Badge, message } from 'antd';
 import { UserOutlined, WalletOutlined, TransactionOutlined, LogoutOutlined, CreditCardOutlined, BankOutlined, HistoryOutlined, SettingOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { SetUser } from '../../redux/UserSlice';
+import axios from 'axios';
 
 function Profile() {
   const { user, loading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
+  const [userBalance, setUserBalance] = useState(0);
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserData();
+    }
+  }, [user]);
+
+  const fetchUserData = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    try {
+      // Fetch updated user data
+      const userResponse = await axios.get('http://localhost:5000/api/users/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (userResponse.data?.user) {
+        setUserBalance(userResponse.data.user.balance || 0);
+        dispatch(SetUser(userResponse.data.user));
+      }
+
+      // Fetch transactions count
+      const transactionsResponse = await axios.get('http://localhost:5000/api/transactions', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (transactionsResponse.data.success) {
+        setTransactions(transactionsResponse.data.transactions || []);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     dispatch(SetUser(null));
     message.success('Logged out successfully');
     navigate('/signin');
@@ -59,11 +95,11 @@ function Profile() {
     <div className="w-full grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
       <div className="glass-card p-3 sm:p-6 flex flex-col items-center shadow-lg rounded-lg bg-gradient-to-br from-blue-600 to-blue-400 text-white">
         <span className="text-xs text-blue-400 sm:text-lg mb-1">Balance</span>
-        <span className="text-sm text-blue-400 sm:text-2xl font-bold">${user?.balance || 0}</span>
+        <span className="text-sm text-blue-600 sm:text-2xl font-bold">${userBalance.toFixed(2)}</span>
       </div>
       <div className="glass-card p-3 sm:p-6 flex flex-col items-center shadow-lg rounded-lg bg-gradient-to-br from-green-500 to-green-300 text-white">
-        <span className="text-xs text-blue-400 sm:text-lg mb-1">Transactions</span>
-        <span className="text-sm text-blue-400 sm:text-2xl font-bold">{user?.transactions?.length || 0}</span>
+        <span className="text-xs text-green-400 sm:text-lg mb-1">Transactions</span>
+        <span className="text-sm text-green-600 sm:text-2xl font-bold">{transactions.length}</span>
       </div>
       <div className="glass-card p-3 sm:p-6 flex flex-col items-center shadow-lg rounded-lg bg-gradient-to-br from-blue-500 to-blue-300 text-white col-span-2 sm:col-span-1">
         <span className="text-xs text-blue-400 sm:text-lg mb-1">Account Level</span>
@@ -88,14 +124,14 @@ function Profile() {
       <div className="flex-1 glass-card p-4 sm:p-6 flex flex-col items-center shadow-lg rounded-lg">
         <span className="text-base sm:text-lg font-bold text-blue-700 mb-3 sm:mb-4">Recent Transactions</span>
         <div className="w-full flex flex-col gap-2">
-          {(user?.transactions || []).slice(0, 5).map((transaction, idx) => (
-            <div key={idx} className="flex justify-between items-center bg-blue-50 rounded-lg px-3 sm:px-4 py-1.5 sm:py-2">
-              <span className="font-semibold text-blue-700 text-xs sm:text-sm">{transaction.type}</span>
-              <span className="text-gray-500 text-[10px] sm:text-xs">{new Date(transaction.date).toLocaleDateString()}</span>
-              <span className={`font-bold text-xs sm:text-sm ${transaction.amount > 0 ? 'text-green-500' : 'text-red-500'}`}>${Math.abs(transaction.amount).toFixed(2)}</span>
+          {transactions.slice(0, 5).map((transaction, idx) => (
+            <div key={transaction._id || idx} className="flex justify-between items-center bg-blue-50 rounded-lg px-3 sm:px-4 py-1.5 sm:py-2">
+              <span className="font-semibold text-blue-700 text-xs sm:text-sm capitalize">{transaction.type}</span>
+              <span className="text-gray-500 text-[10px] sm:text-xs">{new Date(transaction.createdAt).toLocaleDateString()}</span>
+              <span className={`font-bold text-xs sm:text-sm ${transaction.amount > 0 ? 'text-green-500' : 'text-red-500'}`}>${Math.abs(parseFloat(transaction.amount) || 0).toFixed(2)}</span>
             </div>
           ))}
-          {(!user?.transactions || user.transactions.length === 0) && (
+          {transactions.length === 0 && (
             <span className="text-gray-400 text-center text-xs sm:text-sm">No recent transactions</span>
           )}
         </div>

@@ -17,35 +17,9 @@ function Layout() {
       <Navbar className="bg-blur-md text-white shadow-lg" />
 
       {/* Main Content */}
-     <main className="flex-grow w-full flex items-center justify-center px-4 sm:px-8 md:px-12 py-6 relative z-10 bg-transparent">
-  <div className="w-full max-w-6xl bg-white/90 backdrop-blur-2xl rounded-3xl shadow-[0_0_50px_rgba(59,130,246,0.5)] border border-blue-400 p-6 sm:p-10 md:p-14 text-blue-600 animate-fadeIn scale-100 hover:scale-[1.01] transition-transform duration-500 ease-out">
-
-    <h1 className="text-4xl font-extrabold text-center mb-6  animate-slideUp">
-      Welcome to Pay-Wallet
-    </h1>
-
-    <p className="text-center text-gray-700 mb-8 text-lg leading-relaxed">
-      Your one-stop solution for <span className="font-bold text-blue-600">secure</span> and <span className="font-bold text-purple-500">easy</span> online payments. 
-      Explore our features and manage your transactions seamlessly.
-    </p>
-
-    <Outlet />
-  </div>
-
-  {/* Animations */}
-  <style>{`
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fadeIn { animation: fadeIn 0.8s ease-out forwards; }
-    .animate-slideUp { animation: slideUp 1s ease-out forwards; }
-  `}</style>
-</main>
+      <main className="flex-grow w-full relative z-10 bg-transparent">
+        <Outlet />
+      </main>
 
 
       {/* Mobile Navigation */}

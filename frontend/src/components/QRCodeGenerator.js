@@ -15,9 +15,12 @@ function QRCodeGenerator() {
     const generateQR = async (values) => {
         try {
             setLoading(true);
-            const response = await axios.post('/api/qrcode/generate', {
+            const token = localStorage.getItem('token');
+            const response = await axios.post('http://localhost:5000/api/qrcode/generate', {
                 amount: parseFloat(values.amount),
                 description: values.description
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
             });
 
             if (response.data.success) {

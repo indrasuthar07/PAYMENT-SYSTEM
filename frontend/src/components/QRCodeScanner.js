@@ -42,7 +42,10 @@ function QRCodeScanner() {
             const qrId = decodedText.split('/').pop();
             setLoading(true);
             
-            const response = await axios.get(`/api/qrcode/${qrId}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:5000/api/qrcode/${qrId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             if (response.data.success) {
                 setQrData(response.data.qrCode);
                 setIsModalVisible(true);
@@ -63,7 +66,10 @@ function QRCodeScanner() {
     const handlePayment = async () => {
         try {
             setLoading(true);
-            const response = await axios.post(`/api/qrcode/pay/${qrData.id}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.post(`http://localhost:5000/api/qrcode/pay/${qrData.id}`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             
             if (response.data.success) {
                 message.success('Payment processed successfully');

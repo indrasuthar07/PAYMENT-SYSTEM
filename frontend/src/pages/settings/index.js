@@ -30,7 +30,7 @@ function Settings() {
         navigate('/signin');
         return;
       }
-      const response = await axios.get('https://payment-system-07.onrender.com/api/users/profile', {
+      const response = await axios.get('http://localhost:5000/api/users/profile', {
         headers: { Authorization: `Bearer ${token}` }
       });
       dispatch(SetUser(response.data));
@@ -50,11 +50,16 @@ function Settings() {
         navigate('/signin');
         return;
       }
-      const response = await axios.put('https://payment-system-07.onrender.com/users/profile', values, {
+      const response = await axios.put('http://localhost:5000/api/users/profile', values, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      dispatch(SetUser(response.data.user));
-      message.success('Settings updated successfully!');
+      if (response.data.user) {
+        dispatch(SetUser(response.data.user));
+        message.success('Settings updated successfully!');
+      } else if (response.data) {
+        dispatch(SetUser(response.data));
+        message.success('Settings updated successfully!');
+      }
     } catch (error) {
       message.error('Failed to update settings');
       if (error.response?.status === 401) {
@@ -114,18 +119,36 @@ function Settings() {
           <Form
             layout="vertical"
             initialValues={{
+              firstName: user?.firstName,
+              lastName: user?.lastName,
               email: user?.email,
               mobileNo: user?.mobileNo,
             }}
             onFinish={onFinish}
             className="w-full space-y-6"
           >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Form.Item
+                name="firstName"
+                label={<span className="text-gray-700">First Name</span>}
+                rules={[{ required: true, message: 'Please input your first name!' }]}
+              >
+                <Input prefix={<UserOutlined className="text-blue-600" />} className="hover:border-blue-400 focus:border-blue-400" />
+              </Form.Item>
+              <Form.Item
+                name="lastName"
+                label={<span className="text-gray-700">Last Name</span>}
+                rules={[{ required: true, message: 'Please input your last name!' }]}
+              >
+                <Input prefix={<UserOutlined className="text-blue-600" />} className="hover:border-blue-400 focus:border-blue-400" />
+              </Form.Item>
+            </div>
             <Form.Item
               name="email"
               label={<span className="text-gray-700">Email Address</span>}
               rules={[{ required: true, type: 'email' }]}
             >
-              <Input prefix={<UserOutlined className="text-blue-600" />} className="hover:border-blue-400 focus:border-blue-400" />
+              <Input prefix={<UserOutlined className="text-blue-600" />} className="hover:border-blue-400 focus:border-blue-400" disabled />
             </Form.Item>
             <Form.Item
               name="mobileNo"

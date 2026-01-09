@@ -1,22 +1,26 @@
+require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const passport = require("passport");
 const User = require("./models/User");
 const userRoutes = require("./routes/userroute");
 const transactionRoutes = require("./routes/transictionroute");
 const qrCodeRoutes = require("./routes/qrcoderoute");
-require("dotenv").config();
+const authRoutes = require("./routes/authroute");
 
 const app = express();
 
 // Middleware
 app.use(cors({
-  origin: ["https://payment-system-777.onrender.com", "http://localhost:3000"],
+  origin: "http://localhost:3000",
   credentials: true,
 }));
 app.use(express.json());
+app.use(passport.initialize());
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
@@ -30,6 +34,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 app.use("/api/users", userRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/qrcode", qrCodeRoutes);
+app.use("/api/auth", authRoutes);
 
 // Register user
 app.post("/api/register", async (req, res) => {

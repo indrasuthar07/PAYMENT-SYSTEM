@@ -18,7 +18,7 @@ function AddMoneyModal({ showAddMoneyModal, setShowAddMoneyModal, reloadData }) 
         setLoading(true);
         try {
             const response = await axios.post(
-                'https://payment-system-07.onrender.com/api/transactions/deposit',
+                'http://localhost:5000/api/transactions/deposit',
                 {
                     amount: parseFloat(values.amount),
                     description: values.description,

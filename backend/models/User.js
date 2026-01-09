@@ -3,12 +3,10 @@ const mongoose =require('mongoose');
 const userSchema = new mongoose.Schema({
   firstName:{
     type: String,
-    required: true,
     trim: true
   },
   lastName:{
     type:String,
-    required: true,
     trim:true
   },
   email:{
@@ -20,15 +18,20 @@ const userSchema = new mongoose.Schema({
   },
   password:{
     type: String,
-    required:true
+    required: function() {
+      return !this.googleId; // Password required only if not using Google OAuth
+    }
+  },
+  googleId:{
+    type: String,
+    sparse: true,
+    unique: true
   },
   dateOfBirth:{
-    type:Date,
-    required: true
+    type:Date
   },
   mobileNo:{
     type:String,
-    required: true,
     trim:true
   },
   balance:{
