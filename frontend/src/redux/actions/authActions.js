@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { SetUser, SetLoading, SetError, ClearUser } from '../UserSlice';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL =
+  window.location.hostname === 'localhost'
+    ? 'http://localhost:5000/api'
+    : 'https://payment-system-777.onrender.com/api';
 
 // Add token to all requests
 axios.interceptors.request.use(
@@ -21,13 +24,13 @@ export const login = (email, password) => async (dispatch) => {
   try {
     dispatch(SetLoading(true));
     const response = await axios.post(`${API_URL}/login`, { email, password });
-    
+
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       dispatch(SetUser(response.data.user));
     }
-    
+
     return response.data;
   } catch (error) {
     dispatch(SetError(error.response?.data?.message || 'Login failed'));
@@ -41,13 +44,13 @@ export const register = (userData) => async (dispatch) => {
   try {
     dispatch(SetLoading(true));
     const response = await axios.post(`${API_URL}/register`, userData);
-    
+
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       dispatch(SetUser(response.data.user));
     }
-    
+
     return response.data;
   } catch (error) {
     dispatch(SetError(error.response?.data?.message || 'Registration failed'));
@@ -67,7 +70,7 @@ export const checkAuth = () => async (dispatch) => {
   try {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
-    
+
     if (!token || !user) {
       dispatch(ClearUser());
       return;

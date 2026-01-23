@@ -15,8 +15,12 @@ function AuthCallback() {
     const userId = searchParams.get('userId');
 
     if (token && userId) {
+      const API_URL = window.location.hostname === 'localhost'
+        ? 'http://localhost:5000/api'
+        : 'https://payment-system-777.onrender.com/api';
+
       // Verify token and get user data
-      axios.post('http://localhost:5000/api/auth/google/verify', { token })
+      axios.post(`${API_URL}/auth/google/verify`, { token })
         .then((response) => {
           if (response.data.token && response.data.user) {
             localStorage.setItem('token', response.data.token);
