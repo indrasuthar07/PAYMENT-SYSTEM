@@ -1,10 +1,7 @@
 import axios from 'axios';
 import { SetUser, SetLoading, SetError, ClearUser } from '../UserSlice';
 
-const API_URL =
-  window.location.hostname === 'localhost'
-    ? 'http://localhost:5000/api'
-    : 'https://payment-system-777.onrender.com/api';
+import { API_URL } from '../../config';
 
 // Add token to all requests
 axios.interceptors.request.use(

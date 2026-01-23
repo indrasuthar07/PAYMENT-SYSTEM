@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Form, Input, Button, message, Select } from 'antd';
 import axios from 'axios';
+import { API_URL } from '../../config';
 
 function TransferModal({ showTransferModal, setShowTransferModal, reloadData }) {
     const [form] = Form.useForm();
@@ -18,7 +19,7 @@ function TransferModal({ showTransferModal, setShowTransferModal, reloadData }) 
 
         setVerifying(true);
         try {
-            const response = await axios.get(`http://localhost:5000/api/transactions/verify-account/${accountId}`, {
+            const response = await axios.get(`${API_URL}/transactions/verify-account/${accountId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (response.data.success) {
@@ -51,7 +52,7 @@ function TransferModal({ showTransferModal, setShowTransferModal, reloadData }) 
         setLoading(true);
         try {
             const response = await axios.post(
-                'http://localhost:5000/api/transactions/transfer',
+                `${API_URL}/transactions/transfer`,
                 {
                     receiverId: receiverDetails._id,
                     amount: parseFloat(values.amount),
@@ -77,7 +78,7 @@ function TransferModal({ showTransferModal, setShowTransferModal, reloadData }) 
             console.error('Transfer error:', error);
             const errorMessage = error.response?.data?.message || 'Error processing transfer';
             message.error(errorMessage);
-            
+
             // If the error is due to insufficient balance, show a more specific message
             if (errorMessage.includes('Insufficient balance')) {
                 message.error('You do not have enough balance to complete this transfer');
@@ -111,7 +112,7 @@ function TransferModal({ showTransferModal, setShowTransferModal, reloadData }) 
                     label="Receiver's Account ID"
                     rules={[{ required: true, message: 'Please enter account ID' }]}
                 >
-                    <Input 
+                    <Input
                         placeholder="Enter account ID"
                         disabled={verifying}
                     />

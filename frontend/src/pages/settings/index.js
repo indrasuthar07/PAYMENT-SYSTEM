@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { SetUser } from '../../redux/UserSlice';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../../config';
 
 const { Option } = Select;
 
@@ -30,7 +31,7 @@ function Settings() {
         navigate('/signin');
         return;
       }
-      const response = await axios.get('http://localhost:5000/api/users/profile', {
+      const response = await axios.get(`${API_URL}/users/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       dispatch(SetUser(response.data));
@@ -50,7 +51,7 @@ function Settings() {
         navigate('/signin');
         return;
       }
-      const response = await axios.put('http://localhost:5000/api/users/profile', values, {
+      const response = await axios.put(`${API_URL}/users/profile`, values, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.user) {

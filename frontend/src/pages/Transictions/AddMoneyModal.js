@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Form, Input, Button, message, Select } from 'antd';
 import axios from 'axios';
+import { API_URL } from '../../config';
 
 const { Option } = Select;
 
@@ -18,7 +19,7 @@ function AddMoneyModal({ showAddMoneyModal, setShowAddMoneyModal, reloadData }) 
         setLoading(true);
         try {
             const response = await axios.post(
-                'http://localhost:5000/api/transactions/deposit',
+                `${API_URL}/transactions/deposit`,
                 {
                     amount: parseFloat(values.amount),
                     description: values.description,
@@ -80,7 +81,7 @@ function AddMoneyModal({ showAddMoneyModal, setShowAddMoneyModal, reloadData }) 
                     rules={[
                         { required: true, message: 'Please enter amount' },
                         { type: 'number', transform: (value) => Number(value), min: 1, message: 'Amount must be greater than 0' },
-                        { 
+                        {
                             validator: (_, value) => {
                                 if (value > 5000) {
                                     return Promise.reject('Maximum deposit amount is 5000');

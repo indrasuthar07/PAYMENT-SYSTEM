@@ -12,9 +12,11 @@ import AddMoneyModal from '../Transictions/AddMoneyModal';
 import axios from 'axios';
 import CountUp from 'react-countup';
 
+import { API_BASE_URL } from '../../config';
+
 const { Title } = Typography;
 
-const API_BASE_URL = 'http://localhost:5000';
+
 
 const Home = () => {
   const { user, loading } = useSelector((state) => state.auth);
@@ -35,7 +37,7 @@ const Home = () => {
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
-    
+
     const monthlyTransactions = transactions.filter(t => {
       const transactionDate = new Date(t.createdAt);
       return transactionDate.getMonth() === currentMonth && transactionDate.getFullYear() === currentYear;
@@ -90,7 +92,7 @@ const Home = () => {
       if (response.data.success) {
         const fetchedTransactions = response.data.transactions || [];
         setTransactions(fetchedTransactions);
-        
+
         // Calculate monthly stats
         if (user?.id) {
           const { income, expense } = calculateMonthlyStats(fetchedTransactions, user.id);
@@ -166,10 +168,10 @@ const Home = () => {
             <p className="text-gray-600 text-sm">Here's your wallet overview</p>
           </div>
           <Badge count={0} showZero={false} offset={[-5, 5]}>
-            <Button 
-              type="primary" 
-              shape="round" 
-              icon={<BellOutlined />} 
+            <Button
+              type="primary"
+              shape="round"
+              icon={<BellOutlined />}
               size="middle"
               className="bg-gradient-to-r from-blue-600 to-blue-400 border-none shadow-md"
             >
@@ -244,9 +246,9 @@ const Home = () => {
         <div className="w-full">
           <div className="flex justify-between items-center mb-4">
             <Title level={5} className="mb-0 text-blue-700 text-base">Recent Transactions</Title>
-            <Button 
-              type="link" 
-              onClick={() => navigate('/transactions')} 
+            <Button
+              type="link"
+              onClick={() => navigate('/transactions')}
               className="text-blue-600 p-0 h-auto text-xs sm:text-sm"
             >
               View All <EyeOutlined />
@@ -255,21 +257,20 @@ const Home = () => {
           {recentTransactions.length > 0 ? (
             <div className="space-y-2">
               {recentTransactions.map((transaction) => {
-                const isIncome = transaction.type === 'deposit' || 
-                                 (transaction.type === 'transfer' && 
-                                  transaction.receiver && 
-                                  (transaction.receiver._id === user?.id || transaction.receiver.toString() === user?.id));
+                const isIncome = transaction.type === 'deposit' ||
+                  (transaction.type === 'transfer' &&
+                    transaction.receiver &&
+                    (transaction.receiver._id === user?.id || transaction.receiver.toString() === user?.id));
                 const amount = parseFloat(transaction.amount) || 0;
-                
+
                 return (
                   <div
                     key={transaction._id}
                     className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        isIncome ? 'bg-green-100' : 'bg-red-100'
-                      }`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isIncome ? 'bg-green-100' : 'bg-red-100'
+                        }`}>
                         {isIncome ? (
                           <ArrowUpOutlined className="text-green-600 text-sm" />
                         ) : (
@@ -286,11 +287,10 @@ const Home = () => {
                       <p className={`font-bold text-sm ${isIncome ? 'text-green-600' : 'text-red-600'}`}>
                         {isIncome ? '+' : '-'}${amount.toFixed(2)}
                       </p>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${
-                        transaction.status === 'completed' ? 'bg-green-100 text-green-700' :
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${transaction.status === 'completed' ? 'bg-green-100 text-green-700' :
                         transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-red-100 text-red-700'
-                      }`}>
+                          'bg-red-100 text-red-700'
+                        }`}>
                         {transaction.status}
                       </span>
                     </div>
@@ -303,8 +303,8 @@ const Home = () => {
               description={<span className="text-gray-600 text-sm">No transactions yet</span>}
               image={Empty.PRESENTED_IMAGE_SIMPLE}
             >
-              <Button 
-                type="primary" 
+              <Button
+                type="primary"
                 onClick={() => setShowAddMoneyModal(true)}
                 className="bg-gradient-to-r from-green-500 to-green-400 border-none shadow-md mt-3 text-xs"
               >
@@ -316,15 +316,15 @@ const Home = () => {
       </div>
 
       {/* Modals */}
-      <TransferModal 
-        showTransferModal={showTransferModal} 
-        setShowTransferModal={setShowTransferModal} 
-        reloadData={reloadData} 
+      <TransferModal
+        showTransferModal={showTransferModal}
+        setShowTransferModal={setShowTransferModal}
+        reloadData={reloadData}
       />
-      <AddMoneyModal 
-        showAddMoneyModal={showAddMoneyModal} 
-        setShowAddMoneyModal={setShowAddMoneyModal} 
-        reloadData={reloadData} 
+      <AddMoneyModal
+        showAddMoneyModal={showAddMoneyModal}
+        setShowAddMoneyModal={setShowAddMoneyModal}
+        reloadData={reloadData}
       />
     </div>
   );

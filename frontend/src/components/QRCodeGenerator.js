@@ -3,6 +3,7 @@ import { Card, Input, Button, Form, message, Modal, Typography, Space } from 'an
 import { QrcodeOutlined, DownloadOutlined } from '@ant-design/icons';
 import { QRCodeCanvas } from 'qrcode.react';
 import axios from 'axios';
+import { API_URL } from '../config';
 
 const { Title, Text } = Typography;
 
@@ -16,7 +17,7 @@ function QRCodeGenerator() {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            const response = await axios.post('http://localhost:5000/api/qrcode/generate', {
+            const response = await axios.post(`${API_URL}/qrcode/generate`, {
                 amount: parseFloat(values.amount),
                 description: values.description
             }, {
@@ -63,7 +64,7 @@ function QRCodeGenerator() {
                         rules={[
                             { required: true, message: 'Please enter amount' },
                             { type: 'number', transform: (value) => Number(value), message: 'Amount must be a number' },
-                          
+
                         ]}
                     >
                         <Input

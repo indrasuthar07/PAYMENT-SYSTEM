@@ -4,6 +4,7 @@ import { ArrowUpOutlined, ArrowDownOutlined, WalletOutlined, TransactionOutlined
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../../config';
 import TransferModal from './TransferModal';
 import AddMoneyModal from './AddMoneyModal';
 
@@ -21,7 +22,7 @@ function Transactions() {
     if (!token) return;
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:5000/api/transactions', {
+      const response = await axios.get(`${API_URL}/transactions`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -37,7 +38,7 @@ function Transactions() {
   const fetchUserBalance = async () => {
     if (!token) return;
     try {
-      const response = await axios.get('http://localhost:5000/api/users/me', {
+      const response = await axios.get(`${API_URL}/users/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data && response.data.user) {
@@ -149,81 +150,81 @@ function Transactions() {
 
   return (
     <div className="w-full min-h-screen py-6 px-2 sm:px-6 md:px-12 bg-gradient-to-br from-blue-100 via-white to-blue-50 flex flex-col items-center">
-  <div className="glass-card w-full max-w-5xl mx-auto p-4 sm:p-8 shadow-2xl mb-8 flex flex-col items-center">
-    <h2 className="text-xl sm:text-3xl font-bold text-blue-700 mb-2 flex items-center gap-2">
-      <TransactionOutlined /> Transactions
-    </h2>
-    <p className="text-gray-600 mb-6 text-center text-sm sm:text-base">
-      View your latest transactions and track spending
-    </p>
+      <div className="glass-card w-full max-w-5xl mx-auto p-4 sm:p-8 shadow-2xl mb-8 flex flex-col items-center">
+        <h2 className="text-xl sm:text-3xl font-bold text-blue-700 mb-2 flex items-center gap-2">
+          <TransactionOutlined /> Transactions
+        </h2>
+        <p className="text-gray-600 mb-6 text-center text-sm sm:text-base">
+          View your latest transactions and track spending
+        </p>
 
-    {/* Stats Cards */}
-    <div className="w-full grid grid-cols-3 gap-3 sm:gap-6 mb-6">
-      <div className="glass-card p-3 flex flex-col sm:p-6 items-center shadow-lg bg-gradient-to-br from-blue-600 to-blue-400 rounded-xl">
-        <span className="text-[8px] font-bold sm:text-lg text-blue-400 mb-1">Total Balance</span>
-        <span className="text-xs sm:text-2xl font-bold text-blue-400">${userBalance}</span>
-      </div>
-      <div className="glass-card p-3 sm:p-6 flex flex-col items-center shadow-lg bg-gradient-to-br from-green-500 to-green-300 rounded-xl">
-        <span className="text-[8px] font-bold sm:text-lg text-green-400 mb-1">Total Income</span>
-        <span className="text-xs sm:text-2xl font-bold text-green-400">$0</span>
-      </div>
-      <div className="glass-card p-3 sm:p-6 flex flex-col items-center shadow-lg bg-gradient-to-br from-red-500 to-red-300 rounded-xl">
-        <span className="text-[8px] font-bold sm:text-lg text-red-400 mb-1">Total Expense</span>
-        <span className="text-xs sm:text-2xl font-bold text-red-400">$0</span>
+        {/* Stats Cards */}
+        <div className="w-full grid grid-cols-3 gap-3 sm:gap-6 mb-6">
+          <div className="glass-card p-3 flex flex-col sm:p-6 items-center shadow-lg bg-gradient-to-br from-blue-600 to-blue-400 rounded-xl">
+            <span className="text-[8px] font-bold sm:text-lg text-blue-400 mb-1">Total Balance</span>
+            <span className="text-xs sm:text-2xl font-bold text-blue-400">${userBalance}</span>
+          </div>
+          <div className="glass-card p-3 sm:p-6 flex flex-col items-center shadow-lg bg-gradient-to-br from-green-500 to-green-300 rounded-xl">
+            <span className="text-[8px] font-bold sm:text-lg text-green-400 mb-1">Total Income</span>
+            <span className="text-xs sm:text-2xl font-bold text-green-400">$0</span>
+          </div>
+          <div className="glass-card p-3 sm:p-6 flex flex-col items-center shadow-lg bg-gradient-to-br from-red-500 to-red-300 rounded-xl">
+            <span className="text-[8px] font-bold sm:text-lg text-red-400 mb-1">Total Expense</span>
+            <span className="text-xs sm:text-2xl font-bold text-red-400">$0</span>
+          </div>
+        </div>
+
+        {/* Header & Actions */}
+        <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3 sm:gap-4">
+          <span className="text-lg sm:text-xl font-semibold text-blue-700">Transaction History</span>
+          <div className="flex flex-col sm:flex-row gap-2 flex-wrap w-full sm:w-auto">
+            <button
+              className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-green-400 text-white font-semibold px-4 sm:px-6 py-2 rounded-xl shadow-lg hover:from-green-600 hover:to-green-500 transition-all"
+              onClick={() => setShowAddMoneyModal(true)}
+            >
+              <PlusOutlined className="mr-1 sm:mr-2" /> Add Money
+            </button>
+            <button
+              className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold px-4 sm:px-6 py-2 rounded-xl shadow-lg hover:from-blue-700 hover:to-blue-500 transition-all"
+              onClick={() => setShowTransferModal(true)}
+            >
+              <SwapOutlined className="mr-1 sm:mr-2" /> Transfer
+            </button>
+          </div>
+        </div>
+
+        {/* Responsive Table */}
+        <div className="w-full overflow-x-auto rounded-lg border border-gray-100">
+          <Table
+            columns={columns}
+            dataSource={transactions}
+            rowKey="_id"
+            loading={loading}
+            pagination={{ pageSize: 5 }}
+            scroll={{ x: 'max-content' }}
+            className="wallet-table text-[10px] sm:text-xs md:text-sm"
+          />
+        </div>
+
+        {/* Modals */}
+        <AddMoneyModal
+          showAddMoneyModal={showAddMoneyModal}
+          setShowAddMoneyModal={setShowAddMoneyModal}
+          reloadData={() => {
+            fetchTransactions();
+            fetchUserBalance();
+          }}
+        />
+        <TransferModal
+          showTransferModal={showTransferModal}
+          setShowTransferModal={setShowTransferModal}
+          reloadData={() => {
+            fetchTransactions();
+            fetchUserBalance();
+          }}
+        />
       </div>
     </div>
-
-    {/* Header & Actions */}
-    <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3 sm:gap-4">
-      <span className="text-lg sm:text-xl font-semibold text-blue-700">Transaction History</span>
-      <div className="flex flex-col sm:flex-row gap-2 flex-wrap w-full sm:w-auto">
-        <button
-          className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-green-400 text-white font-semibold px-4 sm:px-6 py-2 rounded-xl shadow-lg hover:from-green-600 hover:to-green-500 transition-all"
-          onClick={() => setShowAddMoneyModal(true)}
-        >
-          <PlusOutlined className="mr-1 sm:mr-2" /> Add Money
-        </button>
-        <button
-          className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold px-4 sm:px-6 py-2 rounded-xl shadow-lg hover:from-blue-700 hover:to-blue-500 transition-all"
-          onClick={() => setShowTransferModal(true)}
-        >
-          <SwapOutlined className="mr-1 sm:mr-2" /> Transfer
-        </button>
-      </div>
-    </div>
-
-    {/* Responsive Table */}
-    <div className="w-full overflow-x-auto rounded-lg border border-gray-100">
-      <Table
-        columns={columns}
-        dataSource={transactions}
-        rowKey="_id"
-        loading={loading}
-        pagination={{ pageSize: 5 }}
-        scroll={{ x: 'max-content' }}
-        className="wallet-table text-[10px] sm:text-xs md:text-sm"
-      />
-    </div>
-
-    {/* Modals */}
-    <AddMoneyModal
-      showAddMoneyModal={showAddMoneyModal}
-      setShowAddMoneyModal={setShowAddMoneyModal}
-      reloadData={() => {
-        fetchTransactions();
-        fetchUserBalance();
-      }}
-    />
-    <TransferModal
-      showTransferModal={showTransferModal}
-      setShowTransferModal={setShowTransferModal}
-      reloadData={() => {
-        fetchTransactions();
-        fetchUserBalance();
-      }}
-    />
-  </div>
-</div>
 
   );
 }

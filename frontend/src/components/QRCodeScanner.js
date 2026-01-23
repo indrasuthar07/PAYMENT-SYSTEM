@@ -4,6 +4,7 @@ import { QrcodeOutlined, CameraOutlined } from '@ant-design/icons';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../config';
 
 const { Title, Text } = Typography;
 
@@ -41,9 +42,9 @@ function QRCodeScanner() {
             // Extract QR ID from the URL
             const qrId = decodedText.split('/').pop();
             setLoading(true);
-            
+
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:5000/api/qrcode/${qrId}`, {
+            const response = await axios.get(`${API_URL}/qrcode/${qrId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (response.data.success) {
@@ -67,10 +68,10 @@ function QRCodeScanner() {
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            const response = await axios.post(`http://localhost:5000/api/qrcode/pay/${qrData.id}`, {}, {
+            const response = await axios.post(`${API_URL}/qrcode/pay/${qrData.id}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            
+
             if (response.data.success) {
                 message.success('Payment processed successfully');
                 setIsModalVisible(false);

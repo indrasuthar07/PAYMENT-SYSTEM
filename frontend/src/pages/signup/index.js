@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { SetUser } from '../../redux/UserSlice';
+import { API_URL } from '../../config';
 
 function SignUp() {
   const [loading, setLoading] = useState(false);
@@ -16,12 +17,12 @@ function SignUp() {
       setLoading(true);
 
       // ✅ FIXED API URL (local backend)
-      const API_BASE = "http://localhost:5000";
+      // const API_BASE = "http://localhost:5000";
 
       // ✅ FIXED date format for AntD Dayjs object
       const dob = values.dateOfBirth.format("YYYY-MM-DD");
 
-      const response = await axios.post(`${API_BASE}/api/register`, {
+      const response = await axios.post(`${API_URL}/register`, {
         firstName: values.firstName,
         lastName: values.lastName,
         email: values.email,

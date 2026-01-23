@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { API_URL } from '../../config';
+
 import { useDispatch } from 'react-redux';
 import { SetUser } from '../../redux/UserSlice';
 import axios from 'axios';
@@ -15,10 +17,6 @@ function AuthCallback() {
     const userId = searchParams.get('userId');
 
     if (token && userId) {
-      const API_URL = window.location.hostname === 'localhost'
-        ? 'http://localhost:5000/api'
-        : 'https://payment-system-777.onrender.com/api';
-
       // Verify token and get user data
       axios.post(`${API_URL}/auth/google/verify`, { token })
         .then((response) => {
