@@ -16,7 +16,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: ["http://localhost:3000", "https://payment-system-07.onrender.com"],
+  origin: ["http://localhost:3000", "https://paywalletlive.vercel.app/"],
   credentials: true,
 }));
 app.use(express.json());
