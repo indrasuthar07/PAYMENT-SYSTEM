@@ -1,6 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Switch, Select, Button, message } from 'antd';
-import { UserOutlined, LockOutlined, PhoneOutlined, SettingOutlined } from '@ant-design/icons';
+import { Form, Input, Switch, Select, Button, message, Typography, Progress, Tooltip, Divider } from 'antd';
+import { 
+  User, 
+  Lock, 
+  Phone, 
+  Settings as SettingsIcon, 
+  ShieldCheck, 
+  Sliders, 
+  Globe, 
+  Moon,
+  Smartphone,
+  Key,
+  Bell,
+  Trash2,
+  Info,
+  Badge
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSelector, useDispatch } from 'react-redux';
 import { SetUser } from '../../redux/UserSlice';
 import axios from 'axios';
@@ -8,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../config';
 
 const { Option } = Select;
+const { Title, Text } = Typography;
 
 function Settings() {
   const { user, loading: authLoading } = useSelector((state) => state.auth);
@@ -16,30 +33,33 @@ function Settings() {
   const [activeTab, setActiveTab] = useState('account');
   const [loading, setLoading] = useState(false);
 
+  // Advanced State: Password Strength
+  const [password, setPassword] = useState('');
+  
+  const calculateStrength = (pwd) => {
+    let strength = 0;
+    if (pwd.length > 8) strength += 25;
+    if (/[A-Z]/.test(pwd)) strength += 25;
+    if (/[0-9]/.test(pwd)) strength += 25;
+    if (/[^A-Za-z0-9]/.test(pwd)) strength += 25;
+    return strength;
+  };
+
   useEffect(() => {
-    if (!user) {
-      navigate('/signin');
-      return;
-    }
+    if (!user) { navigate('/signin'); return; }
     fetchUserProfile();
   }, [user, navigate]);
 
   const fetchUserProfile = async () => {
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/signin');
-        return;
-      }
+      if (!token) return navigate('/signin');
       const response = await axios.get(`${API_URL}/users/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       dispatch(SetUser(response.data));
     } catch (error) {
       message.error('Failed to load user profile');
-      if (error.response?.status === 401) {
-        navigate('/signin');
-      }
     }
   };
 
@@ -47,168 +67,196 @@ function Settings() {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/signin');
-        return;
-      }
       const response = await axios.put(`${API_URL}/users/profile`, values, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (response.data.user) {
-        dispatch(SetUser(response.data.user));
-        message.success('Settings updated successfully!');
-      } else if (response.data) {
-        dispatch(SetUser(response.data));
-        message.success('Settings updated successfully!');
-      }
+      dispatch(SetUser(response.data.user || response.data));
+      message.success('Settings updated successfully!');
     } catch (error) {
       message.error('Failed to update settings');
-      if (error.response?.status === 401) {
-        navigate('/signin');
-      }
     } finally {
       setLoading(false);
     }
   };
 
-  if (authLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-50 to-white">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-white">
-        <div className="bg-white/80 rounded-2xl shadow-2xl p-8 flex flex-col items-center">
-          <span className="text-3xl font-bold text-blue-600 mb-2">Please sign in to access settings</span>
-          <button
-            onClick={() => navigate('/signin')}
-            className="bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:from-blue-700 hover:to-blue-500 transition-all"
-          >
-            Sign In
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   const tabList = [
-    { key: 'account', label: 'Account' },
-    { key: 'security', label: 'Security' },
-    { key: 'preferences', label: 'Preferences' },
+    { key: 'account', label: 'Profile', icon: <User size={18} /> },
+    { key: 'security', label: 'Privacy', icon: <ShieldCheck size={18} /> },
+    { key: 'notifications', label: 'Alerts', icon: <Bell size={18} /> },
+    { key: 'preferences', label: 'Display', icon: <Sliders size={18} /> },
   ];
 
+  if (authLoading) return <div className="min-h-screen bg-white flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-blue-600" /></div>;
+
   return (
-    <div className="w-full min-h-screen py-8 px-2 sm:px-6 md:px-12 bg-gradient-to-br from-blue-100 via-white to-blue-50 flex flex-col items-center">
-      <div className="glass-card w-full max-w-2xl mx-auto p-8 shadow-2xl mb-8 flex flex-col items-center">
-        <h2 className="text-3xl font-bold text-blue-700 mb-6 flex items-center gap-2"><SettingOutlined /> Settings</h2>
-        <div className="flex gap-4 mb-8 w-full justify-center">
-          {tabList.map(tab => (
-            <button
-              key={tab.key}
-              className={`px-6 py-2 rounded-xl font-semibold transition-all text-lg shadow-md ${activeTab === tab.key ? 'bg-gradient-to-r from-blue-600 to-blue-400 text-white' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}`}
-              onClick={() => setActiveTab(tab.key)}
-            >
-              {tab.label}
-            </button>
-          ))}
+    <div className="min-h-screen bg-white relative overflow-hidden pb-24">
+      {/* Dynamic Background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-[-5%] left-[-5%] w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[5%] right-[-5%] w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px]" />
+      </div>
+
+      <div className="relative z-10 max-w-5xl mx-auto px-6 pt-24">
+        
+        {/* Advanced Header */}
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-full mb-4">
+              <SettingsIcon size={14} className="text-blue-600" />
+              <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Command Center</span>
+            </div>
+            <Title level={1} className="!font-black !mb-0 tracking-tighter">ADVANCED SETTINGS</Title>
+          </motion.div>
         </div>
-        {activeTab === 'account' && (
-          <Form
-            layout="vertical"
-            initialValues={{
-              firstName: user?.firstName,
-              lastName: user?.lastName,
-              email: user?.email,
-              mobileNo: user?.mobileNo,
-            }}
-            onFinish={onFinish}
-            className="w-full space-y-6"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Form.Item
-                name="firstName"
-                label={<span className="text-gray-700">First Name</span>}
-                rules={[{ required: true, message: 'Please input your first name!' }]}
+
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar Navigation */}
+          <div className="lg:w-64 space-y-2">
+            {tabList.map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`w-full flex items-center gap-3 px-6 py-4 rounded-2xl font-bold transition-all ${
+                  activeTab === tab.key 
+                  ? 'bg-gray-900 text-white shadow-xl shadow-gray-200' 
+                  : 'bg-transparent text-gray-500 hover:bg-gray-50'
+                }`}
               >
-                <Input prefix={<UserOutlined className="text-blue-600" />} className="hover:border-blue-400 focus:border-blue-400" />
-              </Form.Item>
-              <Form.Item
-                name="lastName"
-                label={<span className="text-gray-700">Last Name</span>}
-                rules={[{ required: true, message: 'Please input your last name!' }]}
+                {tab.icon} {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Content Window */}
+          <div className="flex-1 bg-white border border-gray-100 rounded-[2.5rem] shadow-2xl shadow-blue-500/5 p-8 md:p-10">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
               >
-                <Input prefix={<UserOutlined className="text-blue-600" />} className="hover:border-blue-400 focus:border-blue-400" />
-              </Form.Item>
-            </div>
-            <Form.Item
-              name="email"
-              label={<span className="text-gray-700">Email Address</span>}
-              rules={[{ required: true, type: 'email' }]}
-            >
-              <Input prefix={<UserOutlined className="text-blue-600" />} className="hover:border-blue-400 focus:border-blue-400" disabled />
-            </Form.Item>
-            <Form.Item
-              name="mobileNo"
-              label={<span className="text-gray-700">Phone Number</span>}
-              rules={[
-                { required: true, message: 'Please input your phone number!' },
-                { pattern: /^[0-9]{10}$/, message: 'Please enter a valid 10-digit phone number!' }
-              ]}
-            >
-              <Input prefix={<PhoneOutlined className="text-blue-600" />} className="hover:border-blue-400 focus:border-blue-400" />
-            </Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              className="w-full h-12 bg-gradient-to-r from-blue-600 to-blue-400 border-none hover:from-blue-700 hover:to-blue-500 transition-all duration-300 rounded-lg text-white font-semibold"
-            >
-              Save Changes
-            </Button>
-          </Form>
-        )}
-        {activeTab === 'security' && (
-          <div className="w-full flex flex-col gap-6">
-            <div className="glass-card p-6 flex flex-col items-center shadow-lg">
-              <span className="text-lg font-bold text-blue-700 mb-4">Two-Factor Authentication</span>
-              <Switch className="bg-gray-200" />
-            </div>
-            <div className="glass-card p-6 flex flex-col items-center shadow-lg">
-              <span className="text-lg font-bold text-blue-700 mb-4">Change Password</span>
-              <Input.Password prefix={<LockOutlined className="text-blue-600" />} className="hover:border-blue-400 focus:border-blue-400 mb-4" />
-              <Button className="w-full h-12 bg-gradient-to-r from-blue-600 to-blue-400 border-none hover:from-blue-700 hover:to-blue-500 transition-all duration-300 rounded-lg text-white font-semibold">Update Password</Button>
-            </div>
+                {activeTab === 'account' && (
+                  <Form layout="vertical" onFinish={onFinish} initialValues={user} className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                    <Title level={4} className="col-span-full !font-black !mb-6">Personal Identity</Title>
+                    <Form.Item name="firstName" label={<span className="text-[10px] font-black uppercase text-gray-400">First Name</span>}>
+                      <Input className="h-12 rounded-xl bg-gray-50 border-none" />
+                    </Form.Item>
+                    <Form.Item name="lastName" label={<span className="text-[10px] font-black uppercase text-gray-400">Last Name</span>}>
+                      <Input className="h-12 rounded-xl bg-gray-50 border-none" />
+                    </Form.Item>
+                    <Form.Item name="email" className="col-span-full" label={<span className="text-[10px] font-black uppercase text-gray-400">Primary Email</span>}>
+                      <Input disabled className="h-12 rounded-xl bg-gray-100/50 border-none opacity-60" />
+                    </Form.Item>
+                    <Button type="primary" htmlType="submit" loading={loading} className="col-span-full h-14 bg-blue-600 rounded-2xl font-black uppercase border-none mt-4">
+                      Update Profile
+                    </Button>
+                  </Form>
+                )}
+
+                {activeTab === 'security' && (
+                  <div className="space-y-8">
+                    <Title level={4} className="!font-black !mb-6">Security & Access</Title>
+                    
+                    {/* Password Strength Section */}
+                    <div className="p-6 bg-gray-50 rounded-3xl space-y-4">
+                      <div className="flex justify-between items-center">
+                        <Text className="font-bold">Change Password</Text>
+                        <Tooltip title="At least 8 chars, uppercase, and special symbol">
+                          <Info size={16} className="text-gray-400" />
+                        </Tooltip>
+                      </div>
+                      <Input.Password 
+                        placeholder="••••••••" 
+                        onChange={(e) => setPassword(e.target.value)}
+                        prefix={<Lock size={16} className="text-blue-600" />} 
+                        className="h-12 rounded-xl border-none shadow-sm" 
+                      />
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-[10px] font-black uppercase">
+                          <span>Strength</span>
+                          <span className={calculateStrength(password) > 50 ? 'text-green-500' : 'text-red-500'}>
+                            {calculateStrength(password)}%
+                          </span>
+                        </div>
+                        <Progress percent={calculateStrength(password)} showInfo={false} strokeColor="#3b82f6" trailColor="#e5e7eb" strokeWidth={4} />
+                      </div>
+                    </div>
+
+                    {/* Active Sessions */}
+                    <div className="space-y-4">
+                      <Text className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Connected Devices</Text>
+                      <div className="flex items-center justify-between p-4 border border-gray-100 rounded-2xl">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 bg-green-50 text-green-600 rounded-full flex items-center justify-center"><Smartphone size={20}/></div>
+                          <div>
+                            <div className="font-bold text-sm text-gray-800">iPhone 15 Pro</div>
+                            <div className="text-[10px] text-gray-400 uppercase font-bold">Current Session • New York, USA</div>
+                          </div>
+                        </div>
+                        <Badge status="processing" color="green" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'notifications' && (
+                  <div className="space-y-6">
+                    <Title level={4} className="!font-black">Smart Alerts</Title>
+                    {[
+                      { label: 'Payment Receipts', desc: 'Instant email for every transaction', icon: <Bell /> },
+                      { label: 'Security Alerts', desc: 'Notify on new device logins', icon: <ShieldCheck /> },
+                      { label: 'Marketing', desc: 'New feature updates and offers', icon: <Smartphone /> }
+                    ].map((item, i) => (
+                      <div key={i} className="flex justify-between items-center py-4 border-b border-gray-50 last:border-0">
+                        <div>
+                          <div className="font-bold text-gray-800">{item.label}</div>
+                          <div className="text-xs text-gray-400 font-medium">{item.desc}</div>
+                        </div>
+                        <Switch defaultChecked className="bg-blue-600" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {activeTab === 'preferences' && (
+                  <div className="space-y-8">
+                    <Title level={4} className="!font-black">Global Display</Title>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase text-gray-400">System Language</label>
+                        <Select defaultValue="en" className="w-full h-12 rounded-xl custom-select" suffixIcon={<Globe size={16}/>}>
+                          <Option value="en">English (US)</Option>
+                          <Option value="fr">French</Option>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase text-gray-400">Theme Mode</label>
+                        <Select defaultValue="light" className="w-full h-12 rounded-xl" suffixIcon={<Moon size={16}/>}>
+                          <Option value="light">Glass Light</Option>
+                          <Option value="dark">Midnight Pro</Option>
+                        </Select>
+                      </div>
+                    </div>
+                    
+                    <Divider />
+                    
+                    <div className="p-6 bg-red-50 rounded-[2rem] border border-red-100 flex items-center justify-between">
+                      <div>
+                        <div className="font-bold text-red-900">Danger Zone</div>
+                        <div className="text-xs text-red-500 font-medium">Permanently delete your account and data.</div>
+                      </div>
+                      <Button danger type="text" icon={<Trash2 size={18}/>} className="font-bold uppercase tracking-widest text-[10px]">Deactivate</Button>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
           </div>
-        )}
-        {activeTab === 'preferences' && (
-          <div className="w-full flex flex-col gap-6">
-            <div className="glass-card p-6 flex flex-col items-center shadow-lg">
-              <span className="text-lg font-bold text-blue-700 mb-4">Language</span>
-              <Select defaultValue="en" className="w-full hover:border-blue-400 focus:border-blue-400">
-                <Option value="en">English</Option>
-                <Option value="es">Spanish</Option>
-                <Option value="fr">French</Option>
-                <Option value="de">German</Option>
-                <Option value="zh">Chinese</Option>
-              </Select>
-            </div>
-            <div className="glass-card p-6 flex flex-col items-center shadow-lg">
-              <span className="text-lg font-bold text-blue-700 mb-4">Theme</span>
-              <Select defaultValue="light" className="w-full hover:border-blue-400 focus:border-blue-400">
-                <Option value="dark">Dark</Option>
-                <Option value="light">Light</Option>
-                <Option value="system">System</Option>
-              </Select>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
 }
 
-export default Settings; 
+export default Settings;

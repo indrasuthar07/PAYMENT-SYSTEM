@@ -1,13 +1,20 @@
 import React from 'react';
-import { HomeOutlined, TransactionOutlined, QrcodeOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { 
+  Home, 
+  ArrowRightLeft, 
+  QrCode, 
+  User, 
+  Settings 
+} from 'lucide-react'; // Using Lucide for consistency
 
 const navItems = [
-  { key: 'home', icon: <HomeOutlined />, label: 'Home', path: '/home' },
-  { key: 'transactions', icon: <TransactionOutlined />, label: 'Transactions', path: '/transactions' },
-  { key: 'qrcode', icon: <QrcodeOutlined />, label: 'QR', path: '/qrcode' },
-  { key: 'profile', icon: <UserOutlined />, label: 'Profile', path: '/profile' },
-  { key: 'settings', icon: <SettingOutlined />, label: 'Settings', path: '/settings' },
+  { key: 'home', icon: <Home size={20} />, label: 'Home', path: '/home' },
+  { key: 'transactions', icon: <ArrowRightLeft size={20} />, label: 'History', path: '/transactions' },
+  { key: 'qrcode', icon: <QrCode size={20} />, label: 'QR', path: '/qrcode' },
+  { key: 'profile', icon: <User size={20} />, label: 'Profile', path: '/profile' },
+  { key: 'settings', icon: <Settings size={20} />, label: 'Settings', path: '/settings' },
 ];
 
 function MobileNav() {
@@ -15,17 +22,37 @@ function MobileNav() {
   const navigate = useNavigate();
 
   return (
-    <nav className="fixed bottom-0 left-0 w-full bg-blue-700 backdrop-blur-xl border-t border-white/10 flex justify-around items-center py-2 z-50 md:hidden shadow-2xl">
+    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white/80 backdrop-blur-xl border border-gray-100 rounded-[2.5rem] flex justify-around items-center py-4 px-2 z-50 md:hidden shadow-2xl shadow-blue-500/10">
       {navItems.map((item) => {
         const isActive = location.pathname.startsWith(item.path);
+        
         return (
           <button
             key={item.key}
             onClick={() => navigate(item.path)}
-            className={`flex flex-col items-center text-xs font-semibold px-2 focus:outline-none transition-all ${isActive ? 'text-blue-200' : 'text-white/80 hover:text-blue-200'}`}
+            className="relative flex flex-col items-center focus:outline-none group"
           >
-            <span className={`text-xl mb-0.5 ${isActive ? 'drop-shadow-lg' : ''}`}>{item.icon}</span>
-            <span>{item.label}</span>
+            {/* Active Indicator Glow */}
+            {isActive && (
+              <motion.div 
+                layoutId="mobileActive"
+                className="absolute -top-1 w-1 h-1 bg-blue-600 rounded-full"
+              />
+            )}
+
+            <div className={`p-2 rounded-2xl transition-all duration-300 ${
+              isActive 
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' 
+                : 'text-gray-400'
+            }`}>
+              {item.icon}
+            </div>
+
+            <span className={`text-[10px] font-black uppercase tracking-widest mt-1.5 transition-colors ${
+              isActive ? 'text-blue-600' : 'text-gray-400'
+            }`}>
+              {item.key === 'qrcode' ? 'QR' : item.label}
+            </span>
           </button>
         );
       })}
@@ -33,4 +60,4 @@ function MobileNav() {
   );
 }
 
-export default MobileNav; 
+export default MobileNav;

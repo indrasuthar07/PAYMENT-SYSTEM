@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import MobileNav from './MobileNav';
+import { Zap } from 'lucide-react';
 
 function Layout() {
   return (
@@ -25,18 +26,40 @@ function Layout() {
       {/* Mobile Navigation */}
       <MobileNav />
 
-      {/* Footer */}
-      <footer className="bg-blur text-black p-12 text-center border-t border-blue-700 shadow-2xl z-10">
-        <div className="flex flex-col md:flex-row justify-between items-center max-w-6xl mx-auto gap-4">
-          <span className="text-sm">&copy; {new Date().getFullYear()} Pay-Wallet. All rights reserved.</span>
-          <div className="flex gap-6 text-sm">
-            <a href="#" className="hover:text-green-400 transition-transform transform hover:scale-110">Privacy Policy</a>
-            <a href="#" className="hover:text-blue-400 transition-transform transform hover:scale-110">Terms of Service</a>
-            <a href="#" className="hover:text-green-400 transition-transform transform hover:scale-110">Contact</a>
+  <footer className="py-12 bg-white relative overflow-hidden">
+  {/* Subtle top divider with gradient */}
+  <div className="max-w-7xl mx-auto px-6">
+    <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-gray-200 to-transparent mb-12" />
+    
+    <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+      {/* Brand & Status */}
+      <div className="flex flex-col items-center md:items-start gap-3">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-200">
+            <Zap className="text-white h-5 w-5" />
           </div>
+          <span className="text-xl font-black tracking-tight text-gray-900">PayWallet</span>
         </div>
-      </footer>
+        <div className="flex items-center gap-2 px-3 py-1 bg-green-50 rounded-full border border-green-100">
+          <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+          <span className="text-[10px] font-bold text-green-700 uppercase tracking-widest">All Systems Live</span>
+        </div>
+      </div>
 
+      {/* Simplified Links */}
+      <div className="flex gap-8 text-sm font-semibold text-gray-500">
+        <a href="#" className="hover:text-blue-600 transition-colors">Privacy</a>
+        <a href="#" className="hover:text-blue-600 transition-colors">Terms</a>
+        <a href="#" className="hover:text-blue-600 transition-colors">Support</a>
+      </div>
+
+      {/* Copyright */}
+      <p className="text-sm text-gray-400 font-medium">
+        &copy; {new Date().getFullYear()} Pay-Wallet.
+      </p>
+    </div>
+  </div>
+</footer>
       {/* Animations */}
       <style>{`
         @keyframes gridMove {

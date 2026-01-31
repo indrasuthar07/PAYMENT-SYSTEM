@@ -26,7 +26,7 @@ function QRCodePage() {
   const [activeTab, setActiveTab] = useState('generate');
 
   return (
-    <div className="w-full min-h-screen py-8 px-2 sm:px-6 md:px-12 bg-gradient-to-br from-blue-100 via-white to-blue-50 flex flex-col items-center">
+    <div className="mt-20 w-full min-h-screen py-8 px-2 sm:px-6 md:px-12 bg-gradient-to-br from-blue-100 via-white to-blue-50 flex flex-col items-center">
       <div className="glass-card w-full max-w-2xl mx-auto p-8 shadow-2xl mb-8 flex flex-col items-center">
         <h2 className="text-3xl font-bold text-center  text-blue-700 mb-2">QR Code Payments</h2>
         <p className="text-gray-600 mb-6 text-center">Generate or scan QR codes to send and receive payments instantly.</p>
