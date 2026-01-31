@@ -4,8 +4,8 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-const BACKEND_URL = process.env.NODE_ENV === 'production' ? 'https://payment-system-777.onrender.com' : 'http://localhost:5000';
-const FRONTEND_URL = process.env.NODE_ENV === 'production' ? 'https://payment-system-07.onrender.com' : 'http://localhost:3000';
+const BACKEND_URL = process.env.NODE_ENV === 'production' ? 'https://payment-system-tjgo.onrender.com' : 'http://localhost:5000';
+const FRONTEND_URL = process.env.NODE_ENV === 'production' ? 'https://paywalletlive.vercel.app' : 'http://localhost:3000';
 
 //Passport Google Strategy 
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
